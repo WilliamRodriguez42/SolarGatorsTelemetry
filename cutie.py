@@ -27,8 +27,8 @@ class Example(QWidget):
         #self.drawText(event, qp)
         #self.drawPoints(qp)
         #self.drawRectangles(qp)
-        #self.drawLines(qp)
-        self.drawCircles(qp)
+        self.drawLines(qp)
+        #self.drawCircles(qp)
         qp.end()
 
     def drawText(self, event, qp):
