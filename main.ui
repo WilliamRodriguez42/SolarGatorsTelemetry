@@ -1,0 +1,415 @@
+import QtQuick 2.11
+import QtQuick.Window 2.11
+import QtGraphicalEffects 1.0
+//import Text 1.0
+
+Window {
+    id: window
+    visible: true
+    width: 800
+    height: 480
+    color: "#000000"
+    title: qsTr("OBD Monitor")
+
+    Image {
+        id: batterySymbol
+        x: 9
+        y: 11
+        width: 75
+        height: 50
+        fillMode: Image.PreserveAspectFit
+        source: "../Gauge/battery.png"
+
+        Text {
+            id: batteryValue
+            x: 81
+            y: 8
+            color: "#ffffff"
+            text: qsTr("14.0 V")
+            anchors.right: parent.right
+            anchors.rightMargin: -106
+            horizontalAlignment: Text.AlignRight
+            font.pixelSize: 35
+        }
+    }
+
+    Text {
+        id: time
+        x: 295
+        y: 6
+        color: "#ffffff"
+        text: qsTr("12:34 AM")
+        anchors.right: parent.right
+        anchors.rightMargin: 321
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 414
+        horizontalAlignment: Text.AlignRight
+        font.pixelSize: 50
+    }
+
+    Image {
+        id: piSymbol
+        x: 632
+        y: -14
+        width: 100
+        height: 100
+        fillMode: Image.PreserveAspectFit
+        source: "../Gauge/pi.png"
+
+        Text {
+            id: piTempValue
+            x: 103
+            y: 48
+            color: "#ffffff"
+            text: qsTr("40 C")
+            anchors.right: parent.right
+            anchors.rightMargin: -62
+            horizontalAlignment: Text.AlignRight
+            font.pixelSize: 30
+        }
+
+        Text {
+            id: piLoadValue
+            x: 85
+            y: 20
+            color: "#ffffff"
+            text: qsTr("100%")
+            anchors.right: parent.right
+            anchors.rightMargin: -62
+            horizontalAlignment: Text.AlignRight
+            font.pixelSize: 30
+        }
+    }
+
+    Rectangle {
+        id: topLine
+        x: 1
+        y: 75
+        width: 800
+        height: 5
+        color: "#ffffff"
+    }
+
+    Image {
+        id: engineSymbol
+        x: 350
+        y: 187
+        width: 100
+        height: 75
+        fillMode: Image.PreserveAspectFit
+        source: "../Gauge/engine.png"
+
+        Text {
+            id: runtimeValue
+            x: -34
+            y: -53
+            color: "#ffffff"
+            text: qsTr("15m 15s")
+            anchors.right: parent.right
+            anchors.rightMargin: -19
+            horizontalAlignment: Text.AlignRight
+            font.pixelSize: 40
+        }
+
+        Text {
+            id: loadValue
+            x: 3
+            y: 85
+            color: "#ffffff"
+            text: qsTr("100%")
+            anchors.right: parent.right
+            anchors.rightMargin: 6
+            horizontalAlignment: Text.AlignRight
+            font.pixelSize: 35
+        }
+
+        Text {
+            id: timingValue
+            x: -7
+            y: 124
+            width: 99
+            height: 42
+            color: "#ffffff"
+            text: qsTr("-30.0°")
+            anchors.right: parent.right
+            anchors.rightMargin: 8
+            horizontalAlignment: Text.AlignRight
+            font.pixelSize: 35
+        }
+    }
+
+
+
+
+
+
+
+    Image {
+        id: ectSymbol
+        x: 15
+        y: 91
+        width: 100
+        height: 100
+        fillMode: Image.PreserveAspectFit
+        source: "../Gauge/water.png"
+
+        Text {
+            id: ectValue
+            x: 111
+            y: 20
+            color: "#ffffff"
+            text: qsTr("180 F")
+            anchors.right: parent.right
+            anchors.rightMargin: -134
+            horizontalAlignment: Text.AlignRight
+            font.pixelSize: 50
+        }
+    }
+
+
+    Image {
+        id: iatSymbol
+        x: 15
+        y: 221
+        width: 100
+        height: 100
+        rotation: 90
+        fillMode: Image.PreserveAspectFit
+        source: "../Gauge/iat.png"
+
+        Text {
+            id: iatValue
+            x: -11
+            y: -104
+            color: "#ffffff"
+            text: qsTr("100 F")
+            anchors.right: parent.right
+            anchors.rightMargin: -11
+            horizontalAlignment: Text.AlignRight
+            rotation: -90
+            wrapMode: Text.NoWrap
+            font.pixelSize: 50
+        }
+    }
+
+    Image {
+        id: cat1Symbol
+        x: 519
+        y: 91
+        width: 200
+        height: 75
+        fillMode: Image.PreserveAspectFit
+        source: "../Gauge/cat1.png"
+
+        Text {
+            id: cat1Value
+            x: 170
+            y: 17
+            color: "#ffffff"
+            text: qsTr("1200 F")
+            anchors.right: parent.right
+            anchors.rightMargin: -75
+            horizontalAlignment: Text.AlignRight
+            font.pixelSize: 35
+        }
+    }
+
+
+    Image {
+        id: cat2Symbol
+        x: 519
+        y: 167
+        width: 200
+        height: 75
+        fillMode: Image.PreserveAspectFit
+        source: "../Gauge/cat2.png"
+
+        Text {
+            id: cat2Value
+            x: 170
+            y: 17
+            color: "#ffffff"
+            text: qsTr("1200 F")
+            anchors.right: parent.right
+            anchors.rightMargin: -75
+            horizontalAlignment: Text.AlignRight
+            font.pixelSize: 35
+        }
+    }
+
+
+
+
+
+
+    Image {
+        id: afrSymbol
+        x: 15
+        y: 354
+        width: 50
+        height: 100
+        fillMode: Image.PreserveAspectFit
+        source: "../Gauge/afr.png"
+
+        Text {
+            id: afrValue
+            x: 47
+            y: 14
+            color: "#ffffff"
+            text: qsTr("14.7")
+            anchors.right: parent.right
+            anchors.rightMargin: -114
+            horizontalAlignment: Text.AlignRight
+            font.pixelSize: 60
+        }
+    }
+
+    Image {
+        id: fuelSymbol
+        x: 646
+        y: 411
+        width: 47
+        height: 50
+        fillMode: Image.PreserveAspectFit
+        source: "../Gauge/fuel.png"
+
+        Text {
+            id: fuelValue
+            x: 62
+            y: 7
+            color: "#ffffff"
+            text: qsTr("100%")
+            anchors.right: parent.right
+            anchors.rightMargin: -92
+            horizontalAlignment: Text.AlignRight
+            font.pixelSize: 30
+        }
+    }
+
+    Image {
+        id: mpgSymbol
+        x: 632
+        y: 330
+        width: 75
+        height: 75
+        fillMode: Image.PreserveAspectFit
+        source: "../Gauge/mpg.png"
+
+        Text {
+            id: mpgValue
+            x: 84
+            y: 17
+            color: "#ffffff"
+            text: qsTr("26.2")
+            anchors.right: parent.right
+            anchors.rightMargin: -77
+            horizontalAlignment: Text.AlignRight
+            font.pixelSize: 35
+        }
+    }
+
+    Image {
+        id: impgSymbol
+        x: 632
+        y: 255
+        width: 75
+        height: 75
+        fillMode: Image.PreserveAspectFit
+        source: "../Gauge/impg.png"
+
+        Text {
+            id: impgValue
+            x: 81
+            y: 17
+            color: "#ffffff"
+            text: qsTr("13.1")
+            anchors.right: parent.right
+            anchors.rightMargin: -74
+            horizontalAlignment: Text.AlignRight
+            font.pixelSize: 35
+        }
+    }
+
+    Text {
+        id: stft1Label
+        x: 228
+        y: 392
+        color: "#ffffff"
+        text: qsTr("STFT1:")
+        Text {
+            id: stft1Value
+            x: 96
+            y: 0
+            color: "#ffffff"
+            text: qsTr("-25%")
+            anchors.right: parent.right
+            anchors.rightMargin: -77
+            horizontalAlignment: Text.AlignRight
+            font.pixelSize: 30
+        }
+        font.pixelSize: 30
+    }
+
+    Text {
+        id: stft2Label
+        x: 412
+        y: 392
+        color: "#ffffff"
+        text: qsTr("STFT2:")
+        Text {
+            id: stft2Value
+            x: 95
+            y: 0
+            color: "#ffffff"
+            text: qsTr("-25%")
+            anchors.right: parent.right
+            anchors.rightMargin: -79
+            horizontalAlignment: Text.AlignRight
+            font.pixelSize: 30
+        }
+        font.pixelSize: 30
+    }
+
+    Text {
+        id: ltft1Label
+        x: 229
+        y: 434
+        color: "#ffffff"
+        text: qsTr("LTFT1:")
+        Text {
+            id: ltft1Value
+            x: 94
+            y: 0
+            color: "#ffffff"
+            text: qsTr("-25%")
+            anchors.right: parent.right
+            anchors.rightMargin: -77
+            horizontalAlignment: Text.AlignRight
+            font.pixelSize: 30
+        }
+        font.pixelSize: 30
+    }
+
+    Text {
+        id: ltft2Label
+        x: 414
+        y: 434
+        color: "#ffffff"
+        text: qsTr("LTFT2:")
+        Text {
+            id: ltft2Value
+            x: 102
+            y: 0
+            color: "#ffffff"
+            text: qsTr("-25%")
+            anchors.right: parent.right
+            anchors.rightMargin: -79
+            horizontalAlignment: Text.AlignRight
+            font.pixelSize: 30
+        }
+        font.pixelSize: 30
+    }
+
+
+
+}

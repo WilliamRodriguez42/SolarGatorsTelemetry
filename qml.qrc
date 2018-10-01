@@ -1,0 +1,16 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+	<file>Gauge/battery.png</file>
+	<file>Gauge/pi.png</file>
+	<file>Gauge/engine.png</file>
+	<file>Gauge/water.png</file>
+	<file>Gauge/iat.png</file>
+	<file>Gauge/cat1.png</file>
+	<file>Gauge/cat2.png</file>
+	<file>Gauge/afr.png</file>
+	<file>Gauge/fuel.png</file>
+	<file>Gauge/mpg.png</file>
+	<file>Gauge/impg.png</file>
+    </qresource>
+</RCC>
