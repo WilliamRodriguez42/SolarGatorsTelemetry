@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/images">
+        <file>SolarGatorsLogo.PNG</file>
+    </qresource>
+</RCC>
