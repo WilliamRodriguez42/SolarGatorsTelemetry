@@ -8,11 +8,6 @@ import numpy as np
 import datetime
 import glob
 
-#from car_TEST import testSerial
-
-# Test the GUI to see if the values are working properly
-test = False
-
 # Other bullshit
 running_on_pi = False # Change to true if you are running this program on a raspberry pi
 
@@ -158,9 +153,9 @@ class CAN:
 		t.start()
 
 		# Start a loop for getting speed
-		s = threading.Thread(target=self.getSpeed)
+		"""s = threading.Thread(target=self.getSpeed)
 		s.daemon = True
-		s.start()
+		s.start()"""
 
 		# Save default information to our log (mainly for debugging)
 		self.log()
@@ -195,6 +190,35 @@ class CAN:
 		self.ser.write(b'o')
 		self.ser.write(b'\r')
 
+		message = b''
+		while not self.closing:
+			r = self.ser.read() # Read
+
+			if r == b't': # For some reason they like to end with a t so look for that
+				id = message[:3] # Get the first three nibbles for our ID
+				if id not in ids: # If we don't recognize this ID snitch on it (You'll probably get one of these when you first start the Pi)
+					print('Error: ' + str(id))
+					message = b''
+					continue
+
+				#report['id'] = id # I don't remember what this was for
+
+				# Parse out all of the messages in this ID
+				start = 3
+				for m in ids[id]:
+					if m != blank:
+						b = m.num_nibbles
+						rep = message[start:start+b]
+						m.value = int(rep) # Convert to int 32
+
+					start += b
+
+				# Log shit
+				self.log()
+				message = b''
+			else:
+				message += r
+
 	def initSerial(self):
 		# ser is our serial object, but right now we will set it to False
 		self.ser = False
@@ -212,40 +236,7 @@ class CAN:
 					self.log_file.write(str(message.text) + ', ' + str(message.get_true_value()) + ' ' + message.units + '\n')
 		self.log_file.flush()
 
-	def serialRead(self):
-		# READ ALL THE SERIAL!!!!!!!!!
-		while self.ser == False and not self.closing: # If the CANdapter hasn't been found, don't do shit
-			time.sleep(0.1)
-
-		message = b''
-		while not self.closing:
-			r = self.ser.read() # Read the bullshit
-
-			if r == b't': # For some reason they like to end with a t so look for that
-				id = message[:3] # Get the first three nibbles for our ID
-				if id not in ids: # If we don't recognize this ID snitch on it (You'll probably get one of these when you first start the Pi)
-					print('Error: ' + str(id))
-					message = b''
-					continue
-
-				report['id'] = id # I don't remember what this was for
-
-				# Parse out all of the messages in this ID
-				start = 3
-				for m, b in ids[id]:
-					if m:
-						rep = message[start:start+b]
-						report[m].value = int(rep) # Convert to int 16
-
-					start += b
-
-				# Log shit
-				self.log()
-				message = b''
-			else:
-				message += r
-
-	def getSpeed(self):
+	"""def getSpeed(self):
 		# Get the goddamn speed for the love of God
 		while not self.closing:
 			if running_on_pi:
@@ -274,7 +265,7 @@ class CAN:
 
 				self.prev.append(curr)
 				if len(self.prev) > self.valid_length:
-					self.prev = self.prev[1:]
+					self.prev = self.prev[1:]"""
 
 	def closeEvent(self):
 		# Close my ass cheeks
