@@ -11,37 +11,43 @@ from PyQt5.QtCore import *
 from PyQt5.QtQml import *
 from PyQt5.QtWidgets import QApplication
 
-
-##### GLOBALS #####
-voltage = 0
-current = 0
-load    = 0
-temp    = 0
-speed   = 0
-runtime = 0
-##### END GLOBALS #####
+import car_QML
 
 
 ##### Updater Class #####
 # This is how the Qt Quick elements get their data
 # Python and Qt interface with signals and slots
 # Python creates a signal which it sends to a Qt slot
-class UpdaterClass(QObject):
-	normal = pyqtSignal(float, float, float, float, float, int)
+# We need to import the appropriate module containing the desired variables
+# Then we use that module.variable to emit a signal
+# e.g. car_QML.variable_name
+class UpdaterClass(QObject):        
+	DCL     = pyqtSignal(float, float, float, float, float, float)
+	CCL     = pyqtSignal(float, float, float, float, float, float)
+	relays  = pyqtSignal(int, int, int, int, int, int, int)
+	pack    = pyqtSignal(float, float, float, float, float, float, float, float)
 
 	def __init__(self, parent=None):
 		super(UpdaterClass, self).__init__(parent)
 
+	def dcl_update(self):
+		self.DCL.emit(car_QML.DCL_Low_SOC, car_QML.DCL_High_Cell_Resistance, car_QML.DCL_Temperature, car_QML.DCL_Low_Cell_Voltage, car_QML.DCL_Low_Pack_Voltage, car_QML.DCL_Voltage_Failsafe)
 
-	def normal_update(self):
-		self.normal.emit(voltage, current, load, temp, speed, runtime)
+	def ccl_update(self):
+		self.CCL.emit(car_QML.CCL_High_SOC, car_QML.CCL_High_Cell_Resistance, car_QML.CCL_Temperature, car_QML.CCL_High_Cell_Voltage, car_QML.CCL_High_Pack_Voltage, car_QML.CCL_Charger_Latch)
+
+	def relays_update(self):
+		self.relays.emit(car_QML.discharge_relay_disabled, car_QML.charge_relay_disabled, car_QML.charger_safety_disabled, car_QML.diagnostic_trouble_code_active, car_QML.always_on_power_status, car_QML.is_ready_power_status, car_QML.is_charging_power_status)
+
+	def pack_update(self):
+		self.pack.emit(car_QML.Pack_Amp_Hours, car_QML.High_Temperature, car_QML.Low_Temperature, car_QML.Pack_Current, car_QML.Pack_Instant_Voltage, car_QML.State_Of_Charge, car_QML.Relay_Status, car_QML.Watt_Hours)
 ##### END Updater Class #####
 
 
 
-##### Data Generating Threads #####
-# This just gives us some data to work with
-class NormalLoop(QThread):
+##### Data Collection Threads #####
+# This will pull the data from CANBUS via car_QML.py via car_CAN.py
+class DataLoop(QThread):
 
 	def __init__(self):
 		QThread.__init__(self)
@@ -50,49 +56,11 @@ class NormalLoop(QThread):
 		self.wait()
 
 	def run(self):
-		# Refer to the globals as global so we can
-		# change them by reference
-		global voltage
-		global current
-		global load
-		global temp
-		global speed
-		global runtime
-
 		while True:
-			if voltage >= 20 :
-				voltage = 0
-			else :
-				voltage += .000005
+			car_QML.update()        #Call updater function in car_QML
+			self.msleep(150)
 
-			if current >= 50 :
-				current = 0
-			else :
-				current += .000005
-				
-			if load >= 100 :
-				load = 0
-			else :
-				load += .000005
-
-			if temp >= 250 :
-				temp = 0 
-			else :
-				temp += .000005
-
-			if speed >= 100 :
-				speed = 0
-			else :
-				speed += .000005
-
-			if runtime >= 900 :
-				runtime = 0
-			else :
-				runtime += .0000015
-			
-			self.sleep(0)
-##### END Data Generating Threads #####
-
+##### END Data Collection Threads #####
 
 
 ##### MAIN #####
@@ -103,7 +71,7 @@ if __name__ == "__main__":
 	app = QApplication(sys.argv)
 
 	# Create QML engine
-	engine = QQmlApplicationEngine()
+	engine = QQmlApplicationEngine(parent=app)
 
 	# Load QML file
 	engine.load('main.qml')
@@ -118,20 +86,32 @@ if __name__ == "__main__":
 	context = engine.rootContext()
 	context.setContextProperty("updater", updater)
 
-	# Connect normal update signal to QML slot
-	# onNormalUpdate corresponds to the Slot made in QML
-	updater.normal.connect(root.onNormalUpdate)     
+	# Connect PyQt signals to QML slots
+	# onXUpdate corresponds to the Slots made in QML
+	updater.DCL.connect(root.onDCLUpdate)
+	updater.CCL.connect(root.onCCLUpdate)
+	updater.relays.connect(root.onRelaysUpdate)
+	updater.pack.connect(root.onPackUpdate)
 
-	# Create timer for normal update signal
-	normalTimer = QTimer()
-	normalTimer.start(50)
+	# Create timers for update signals
+	updateTimer = QTimer()
+	updateTimer.start(50)
+	updateTimer2 = QTimer()
+	updateTimer2.start(50)
+	updateTimer3 = QTimer()
+	updateTimer3.start(50)
+	updateTimer4 = QTimer()
+	updateTimer4.start(50)
 
-	# Connect normal update QTimer normal update data generation thread
-	normalTimer.timeout.connect(updater.normal_update)
+	# Connect QTimers to emits
+	updateTimer.timeout.connect(updater.dcl_update)
+	updateTimer2.timeout.connect(updater.ccl_update)
+	updateTimer3.timeout.connect(updater.relays_update)
+	updateTimer4.timeout.connect(updater.pack_update)
 
-	# Run normal update data generation thread
-	normalLoop = NormalLoop()
-	normalLoop.start()
+	# Run data collection thread
+	dataLoop = DataLoop()
+	dataLoop.start()
 
 	# Runs the app, and exits Python on GUI exit
 	sys.exit(app.exec_())

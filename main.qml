@@ -10,38 +10,115 @@ ApplicationWindow {
     width: 800
     height: 480
     color: "#000000"
+    property alias root: root       //for Python
     title: "Solar Gators Gauge"
 
     //Our data is "stored" here
-    property real voltageVal    : 0
-    property real currentVal    : 0
-    property real loadVal       : 0
-    property real tempVal       : 0
-    property real speedVal      : 0
-    property real runtimeVal    : 0
+    //Properties must begin with lowercase
+    property real speedVal : 50
+    property real runtimeVal : 3600
+
+    property real dCL_Low_SOC_val               : 100
+    property real dCL_High_Cell_Resistance_val  : 100
+    property real dCL_Temperature_val           : 100
+    property real dCL_Low_Cell_Voltage_val      : 100
+    property real dCL_Low_Pack_Voltage_val      : 100
+    property real dCL_Voltage_Failsafe_val      : 100
+
+    property real cCL_High_SOC_val              : 100
+    property real cCL_High_Cell_Resistance_val  : 100
+    property real cCL_Temperature_val           : 100
+    property real cCL_High_Cell_Voltage_val     : 100
+    property real cCL_High_Pack_Voltage_val     : 100
+    property real cCL_Charger_Latch_val         : 100
+
+    property int discharge_relay_disabled_val       : 0
+    property int charge_relay_disabled_val          : 0
+    property int charger_safety_disabled_val        : 0
+    property int diagnostic_trouble_code_active_val : 1
+    property int always_on_power_status_val         : 1
+    property int is_ready_power_status_val          : 1
+    property int is_charging_power_status_val       : 1
+
+    property real pack_Amp_Hours_val        : 100
+    property real high_Temperature_val      : 100
+    property real low_Temperature_val       : 100
+    property real pack_Current_val          : 100
+    property real pack_Instant_Voltage_val  : 100
+    property real state_Of_Charge_val       : 100
+    property real relay_Status_val          : 100
+    property real watt_Hours_val            : 100
+
 
     /*
         QML JavaScript Updater
         This updates the data in QML from its slot
 
     */
-    function updateNormal(voltage, current, load, temp, speed, runtime) {
-        voltageVal  = voltage;
-        currentVal  = current;
-        loadVal     = load;
-        tempVal     = temp;
-        speedVal    = speed;
-        runtimeVal  = runtime;
+    function updateDCL(dCL_Low_SOC, dCL_High_Cell_Resistance, dCL_Temperature, dCL_Low_Cell_Voltage, dCL_Low_Pack_Voltage, dCL_Voltage_Failsafe) {
+        dCL_Low_SOC_val                 = dCL_Low_SOC;
+        dCL_High_Cell_Resistance_val    = dCL_High_Cell_Resistance;
+        dCL_Temperature_val             = dCL_Temperature;
+        dCL_Low_Cell_Voltage_val        = dCL_Low_Cell_Voltage;
+        dCL_Low_Pack_Voltage_val        = dCL_Low_Pack_Voltage;
+        dCL_Voltage_Failsafe_val        = dCL_Voltage_Failsafe;
+    }
+
+    function updateCCL(cCL_High_SOC, cCL_High_Cell_Resistance, cCL_Temperature, cCL_High_Cell_Voltage, cCL_High_Pack_Voltage, cCL_Charger_Latch) {
+        cCL_High_SOC_val                = cCL_High_SOC;
+        cCL_High_Cell_Resistance_val    = cCL_High_Cell_Resistance;
+        cCL_Temperature_val             = cCL_Temperature;
+        cCL_High_Cell_Voltage_val       = cCL_High_Cell_Voltage;
+        cCL_High_Pack_Voltage_val       = cCL_High_Pack_Voltage;
+        cCL_Charger_Latch_val           = cCL_Charger_Latch;
+    }
+
+    function updateRelays(discharge_relay_disabled, charge_relay_disabled, charger_safety_disabled, diagnostic_trouble_code_active, always_on_power_status, is_ready_power_status, is_charging_power_status) {
+        discharge_relay_disabled_val        = discharge_relay_disabled;
+        charge_relay_disabled_val           = charge_relay_disabled;
+        charger_safety_disabled_val         = charger_safety_disabled;
+        diagnostic_trouble_code_active_val  = diagnostic_trouble_code_active;
+        always_on_power_status_val          = always_on_power_status;
+        is_ready_power_status_val           = is_ready_power_status;
+        is_charging_power_status_val        = is_charging_power_status;
+
         clockText.set();
     }
+
+    function updatePack(pack_Amp_Hours, high_Temperature, low_Temperature, pack_Current, pack_Instant_Voltage, state_Of_Charge, relay_Status, watt_Hours) {
+        pack_Amp_Hours_val          = pack_Amp_Hours;
+        high_Temperature_val        = high_Temperature;
+        low_Temperature_val         = low_Temperature;
+        pack_Current_val            = pack_Current;
+        pack_Instant_Voltage_val    = pack_Instant_Voltage;
+        state_Of_Charge_val         = state_Of_Charge;
+        relay_Status_val            = relay_Status;
+        watt_Hours_val              = watt_Hours;
+    }
+
 
     /*
         QML Slot
         This takes the data from the Python code
     */
-    function onNormalUpdate(voltage, current, load, temp, speed, runtime){
-        updateNormal(voltage, current, load, temp, speed, runtime)
+
+    function onDCLUpdate(dCL_Low_SOC, dCL_High_Cell_Resistance, dCL_Temperature, dCL_Low_Cell_Voltage, dCL_Low_Pack_Voltage, dCL_Voltage_Failsafe) {
+        updateDCL(dCL_Low_SOC, dCL_High_Cell_Resistance, dCL_Temperature, dCL_Low_Cell_Voltage, dCL_Low_Pack_Voltage, dCL_Voltage_Failsafe)
     }
+
+    function onCCLUpdate(cCL_High_SOC, cCL_High_Cell_Resistance, cCL_Temperature, cCL_High_Cell_Voltage, cCL_High_Pack_Voltage, cCL_Charger_Latch) {
+        updateCCL(cCL_High_SOC, cCL_High_Cell_Resistance, cCL_Temperature, cCL_High_Cell_Voltage, cCL_High_Pack_Voltage, cCL_Charger_Latch)
+    }
+
+    function onRelaysUpdate(discharge_relay_disabled, charge_relay_disabled, charger_safety_disabled, diagnostic_trouble_code_active, always_on_power_status, is_ready_power_status, is_charging_power_status) {
+        updateRelays(discharge_relay_disabled, charge_relay_disabled, charger_safety_disabled, diagnostic_trouble_code_active, always_on_power_status, is_ready_power_status, is_charging_power_status)
+    }
+
+    function onPackUpdate(pack_Amp_Hours, high_Temperature, low_Temperature, pack_Current, pack_Instant_Voltage, state_Of_Charge, relay_Status, watt_Hours) {
+        updatePack(pack_Amp_Hours, high_Temperature, low_Temperature, pack_Current, pack_Instant_Voltage, state_Of_Charge, relay_Status, watt_Hours)
+    }
+
+
 
     //Logo
     Image {
@@ -56,6 +133,7 @@ ApplicationWindow {
 
 
     //Time
+
     Item {
         id: time
 
@@ -77,9 +155,9 @@ ApplicationWindow {
                     var minutes = Math.floor(runtimeVal/60);
                     var seconds = runtimeVal - (minutes * 60);
                     if(seconds < 10) {
-                        seconds = "0"+seconds;
+                        seconds = "0" + seconds;
                     }
-                    return minutes+'m '+seconds+'s';
+                    return minutes + 'm ' + seconds + 's';
                 }
                 anchors.right: parent.right
                 anchors.rightMargin: -159
@@ -116,190 +194,364 @@ ApplicationWindow {
     }//end Time
 
 
-    //Battery
+
     Item {
-        id: battery
+        id: dcl
+        width: 1
+        height: 1
+
+        Text {
+            id: dLowSOC
+            x: 34
+            y: 188
+            color: "#ffffff"
+            text: dCL_Low_SOC_val.toFixed(2) + ' %'
+            anchors.right: parent.right
+            anchors.rightMargin: -184
+            font.pixelSize: 35
+            horizontalAlignment: Text.AlignRight
+        }
+
+        Text {
+            id: dHighCellResistance
+            x: 34
+            y: 236
+            color: "#ffffff"
+            text: dCL_High_Cell_Resistance_val.toFixed(2) + ' Ω'
+            anchors.right: parent.right
+            anchors.rightMargin: -175
+            font.pixelSize: 35
+            horizontalAlignment: Text.AlignRight
+        }
+
+        Text {
+            id: dLowCellVoltage
+            x: 34
+            y: 284
+            color: "#ffffff"
+            text: dCL_Low_Cell_Voltage_val.toFixed(2) + ' V'
+            anchors.right: parent.right
+            anchors.rightMargin: -171
+            font.pixelSize: 35
+            horizontalAlignment: Text.AlignRight
+        }
+
+        Text {
+            id: dLowPackVoltage
+            x: 34
+            y: 332
+            color: "#ffffff"
+            text: dCL_Low_Pack_Voltage_val.toFixed(2) + ' V'
+            anchors.right: parent.right
+            anchors.rightMargin: -171
+            font.pixelSize: 35
+            horizontalAlignment: Text.AlignRight
+        }
+
+        Text {
+            id: dVoltageFailsafe
+            x: 34
+            y: 380
+            color: "#ffffff"
+            text: dCL_Voltage_Failsafe_val.toFixed(2) + ' V'
+            anchors.right: parent.right
+            anchors.rightMargin: -171
+            font.pixelSize: 35
+            horizontalAlignment: Text.AlignRight
+        }
+
+        Text {
+            id: dTemperature
+            x: 34
+            y: 428
+            color: "#ffffff"
+            text: dCL_Temperature_val.toFixed(2) + ' C'
+            anchors.right: parent.right
+            anchors.rightMargin: -171
+            font.pixelSize: 35
+            horizontalAlignment: Text.AlignRight
+        }
+    }
+
+    Item {
+        id: ccl
+        width: 1
+        height: 1
+
+        Text {
+            id: cHighSOC
+            x: 645
+            y: 188
+            color: "#ffffff"
+            text: cCL_High_SOC_val.toFixed(2) + ' %'
+            anchors.right: parent.right
+            anchors.rightMargin: -795
+            font.pixelSize: 35
+            horizontalAlignment: Text.AlignRight
+        }
+
+        Text {
+            id: cHighCellResistance
+            x: 645
+            y: 236
+            color: "#ffffff"
+            text: cCL_High_Cell_Resistance_val.toFixed(2) + ' Ω'
+            anchors.right: parent.right
+            anchors.rightMargin: -786
+            font.pixelSize: 35
+            horizontalAlignment: Text.AlignRight
+        }
+
+
+        Text {
+            id: cHighCellVoltage
+            x: 647
+            y: 284
+            color: "#ffffff"
+            text: cCL_High_Cell_Voltage_val.toFixed(2) + ' V'
+            anchors.right: parent.right
+            anchors.rightMargin: -784
+            font.pixelSize: 35
+            horizontalAlignment: Text.AlignRight
+        }
+
+        Text {
+            id: cHighPackVoltage
+            x: 647
+            y: 332
+            color: "#ffffff"
+            text: cCL_High_Pack_Voltage_val.toFixed(2) + ' V'
+            anchors.right: parent.right
+            anchors.rightMargin: -784
+            font.pixelSize: 35
+            horizontalAlignment: Text.AlignRight
+        }
+
+        Text {
+            id: cChargerLatch
+            x: 647
+            y: 380
+            color: "#ffffff"
+            text: cCL_Charger_Latch_val.toFixed(2)
+            anchors.right: parent.right
+            anchors.rightMargin: -752
+            font.pixelSize: 35
+            horizontalAlignment: Text.AlignRight
+        }
+        Text {
+            id: cTemperature
+            x: 647
+            y: 428
+            color: "#ffffff"
+            text: cCL_Temperature_val.toFixed(2) + ' C'
+            anchors.right: parent.right
+            anchors.rightMargin: -784
+            font.pixelSize: 35
+            horizontalAlignment: Text.AlignRight
+        }
+    }
+
+    Item {
+        id: statusIndicators
+        width: 10
+        height: 10
 
         Image {
-            id: batterySymbol
-            x: 54
-            y: 82
+            id: dtc
+            x: 375
+            y: 75
             width: 50
             height: 50
             fillMode: Image.PreserveAspectFit
-            source: "Gauge/battery.png"
+            source: "Gauge/error.png"
 
-            Text {
-                id: loadValue
-                x: 88
-                y: 8
-                color: "#FFFFFF"
-                text: loadVal.toFixed() + "%"
-                anchors.right: parent.right
-                anchors.rightMargin: -83
-                horizontalAlignment: Text.AlignRight
-                font.pixelSize: 30
-            }
-
-            Gauge {
-                id: voltageGauge
-                x: -33
-                y: 93
-                height: 300
-                minimumValue: 0
-                maximumValue: 20
-
-                value: voltageVal
-
-                Text {
-                    id: voltageValue
-                    x: -7
-                    y: -29
-                    color: {
-                        if (voltageVal < 12)
-                            return "#FF0000";
-                        else
-                            return "#FFFFFF";
-                    }
-                    text: voltageVal.toFixed(1) + qsTr(" V")
-                    lineHeight: 1
-                    anchors.right: parent.right
-                    anchors.rightMargin: 0
-                    horizontalAlignment: Text.AlignRight
-                    font.pixelSize: 20
-                }
-
-
-            }
-
-            Gauge {
-                id: currentGauge
-                x: 42
-                y: 93
-                height: 300
-                minimumValue: 0
-                maximumValue: 50
-
-                value: currentVal
-
-                tickmarkAlignment: Qt.AlignRight
-
-                Text {
-                    id: currentValue
-                    x: 0
-                    y: -29
-                    color: {
-                        if (currentVal < 12)
-                            return "#FF0000";
-                        else
-                            return "#FFFFFF";
-                    }
-                    text: currentVal.toFixed(1) + qsTr(" A")
-                    anchors.right: parent.right
-                    anchors.rightMargin: -7
-                    horizontalAlignment: Text.AlignRight
-                    font.pixelSize: 20
-                }
-            }
+            visible: diagnostic_trouble_code_active_val
         }
 
         StatusIndicator {
-            id: batteryError
-            x: 266
-            y: 80
-            width: 40
-            height: 40
+            id: dischargeRelay
+            x: 14
+            y: 87
 
-            color: if(voltageVal <= 10 || voltageVal >= 15){
-                       return "#FF0000"
-                   }
-                   else {
-                       return "#00FF00"
-                   }
-            active: voltageVal > 0 ? true : false
+            active: discharge_relay_disabled_val
         }
-    }//end Battery
 
+        StatusIndicator {
+            id: chargeRelay
+            x: 44
+            y: 87
 
+            active: charge_relay_disabled_val
+        }
 
+        StatusIndicator {
+            id: chargerSafety
+            x: 74
+            y: 87
 
-    //Temperature
-    Item {
-        id: temperature
+            active: charger_safety_disabled_val
+        }
 
         Image {
-            id: tempSymbol
-            x: 733
-            y: 86
+            id: alwaysOnPower
+            x: 712
+            y: 75
             width: 50
             height: 50
             fillMode: Image.PreserveAspectFit
-            source: "Gauge/water.png"
+            source: "Gauge/always.png"
 
-            Text {
-                id: tempValue
-                x: -9
-                y: 158
-                color: {
-                    if (tempVal>= 208)
-                        return "#FF0000"
-                    else if (tempVal >= 194)
-                        return "#FF6600"
-                    else if (tempVal >= 180)
-                        return "#FFFFFF"
-                    else if (tempVal >= 167)
-                        return "#CCEEFF"
-                    else
-                        return "#9999FF"
-                }
-                text: tempVal.toFixed()+" F"
-                anchors.right: parent.right
-                anchors.rightMargin: -9
-                horizontalAlignment: Text.AlignRight
-                font.pixelSize: 50
-            }
+            visible: always_on_power_status_val
         }
 
-        CircularGauge {
-            id: tempGauge
-            x: 642
-            y: -69
-            width: 300
-            height: 300
-            visible: true
-            stepSize: 0.001
-            minimumValue: 0
-            maximumValue: 250
-            rotation: -90
+        Image {
+            id: readyPower
+            x: 758
+            y: 69
+            width: 50
+            height: 50
+            fillMode: Image.PreserveAspectFit
+            source: "Gauge/ready.png"
 
-            value: tempVal
-
-            style: CircularGaugeStyle {
-                minimumValueAngle: -90
-                maximumValueAngle: 0
-                tickmarkStepSize: 50
-
-                tickmarkLabel: Text {
-                    text: styleData.value
-                    color: styleData.value >= 200 ? "#FF0000" : "#FFFFFF"
-                    rotation: 90
-                }
-
-            }
+            visible: is_ready_power_status_val
         }
-    }//end Temperature
+
+        Image {
+            id: chargingPower
+            x: 656
+            y: 75
+            width: 50
+            height: 50
+            fillMode: Image.PreserveAspectFit
+            source: "Gauge/solar.png"
+
+            visible: is_charging_power_status_val
+        }
+
+
+
+
+    }
+
 
 
     //Speed
+    Item {
+        id: pack
+        width: 1
+        height: 1
+
+        Text {
+            id: ampHours
+            x: 215
+            y: 119
+            color: "#ffffff"
+            text: pack_Amp_Hours_val.toFixed(2) + ' Ah'
+            anchors.right: parent.right
+            anchors.rightMargin: -372
+            font.pixelSize: 35
+            horizontalAlignment: Text.AlignRight
+        }
+
+        Text {
+            id: wattHours
+            x: 215
+            y: 147
+            color: "#ffffff"
+            text: watt_Hours_val.toFixed(2) + ' kWh'
+            anchors.right: parent.right
+            anchors.rightMargin: -400
+            font.pixelSize: 35
+            horizontalAlignment: Text.AlignRight
+        }
+
+        Text {
+            id: current
+            x: 216
+            y: 176
+            color: "#ffffff"
+            text: pack_Current_val.toFixed(2) + ' A'
+            anchors.right: parent.right
+            anchors.rightMargin: -353
+            font.pixelSize: 35
+            horizontalAlignment: Text.AlignRight
+        }
+
+        Text {
+            id: instantVoltage
+            x: 216
+            y: 205
+            color: "#ffffff"
+            text: pack_Instant_Voltage_val.toFixed(2) + ' V'
+            anchors.right: parent.right
+            anchors.rightMargin: -353
+            font.pixelSize: 35
+            horizontalAlignment: Text.AlignRight
+        }
+
+        Text {
+            id: pSOC
+            x: 429
+            y: 119
+            color: "#ffffff"
+            text: state_Of_Charge_val.toFixed(2) + ' %'
+            anchors.right: parent.right
+            anchors.rightMargin: -579
+            font.pixelSize: 35
+            horizontalAlignment: Text.AlignRight
+        }
+
+        Text {
+            id: relayStatus
+            x: 429
+            y: 147
+            color: "#ffffff"
+            text: relay_Status_val.toFixed(2)
+            anchors.right: parent.right
+            anchors.rightMargin: -534
+            font.pixelSize: 35
+            horizontalAlignment: Text.AlignRight
+        }
+
+        Text {
+            id: highTemperature
+            x: 429
+            y: 176
+            color: "#ffffff"
+            text: high_Temperature_val.toFixed(2) + ' C'
+            anchors.right: parent.right
+            anchors.rightMargin: -566
+            font.pixelSize: 35
+            horizontalAlignment: Text.AlignRight
+        }
+
+        Text {
+            id: lowTemperature
+            x: 429
+            y: 205
+            color: "#ffffff"
+            text: low_Temperature_val.toFixed(2) + ' C'
+            anchors.right: parent.right
+            anchors.rightMargin: -566
+            font.pixelSize: 35
+            horizontalAlignment: Text.AlignRight
+        }
+
+
+
+
+
+    }
+
     Item {
         id: speed
         transformOrigin: Item.Center
         CircularGauge {
             id: speedGauge
-            x: 150
-            y: 210
-            width: 500
-            height: 500
+            x: 190
+            y: 256
+            width: 420
+            height: 409
             stepSize: 0.001
 
             style: CircularGaugeStyle {
@@ -325,32 +577,25 @@ ApplicationWindow {
 
             value: speedVal
 
-            Text {
-                id: speedValue
-                x: 199
-                y: -75
-                color: {
-                    "#FFFFFF"
-                }
-                text: speedVal.toFixed(0)+" MPH"
-                anchors.right: parent.right
-                anchors.rightMargin: 157
-                horizontalAlignment: Text.AlignRight
-                font.pixelSize: 50
-            }
         }
 
         StatusIndicator {
             id: optimumSpeed
-            x: 500
-            y: 80
-            width: 40
-            height: 40
+            x: 385
+            y: 444
+            width: 30
+            height: 33
 
             color: (speedVal >= 45 && speedVal <= 55) ? "#00FF00" : "#FFFF00"
             active: (speedVal >= 30 && speedVal <= 70) ? true : false
         }
-    }//end Speed
+    }
+
+
+
+
+
+    //end Speed
 
 
 }//end ApplicationWindow

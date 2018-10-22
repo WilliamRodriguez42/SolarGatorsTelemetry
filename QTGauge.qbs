@@ -26,6 +26,13 @@ Project {
         ]
 
         files: [
+            "Car/car_CAN.py",
+            "Car/car_QML.py",
+            "QTGauge.qbs",
+            "QTGauge.qbs.user",
+            "main.qml",
+            "main.qmlc",
+            "main.ui",
             "pyqtgauge.py",
             "qml.qrc",
             "qtgauge.py",
