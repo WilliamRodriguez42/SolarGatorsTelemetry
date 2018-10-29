@@ -131,13 +131,13 @@ class CAN:
 		self.closing = False # Set to true if we are trying to close the program
 
 		# Delete last log file if there are more than 9
-		files = glob.glob('*.txt')
+		files = glob.glob('Logs/*.txt')
 		while len(files) >= 10:
 			os.remove(sorted(files)[0])
 			files = glob.glob('*.txt')
 
 		# Create our log file
-		self.log_file = open(str(datetime.datetime.now()) + '.txt', 'w')
+		self.log_file = open('Logs/' + str(datetime.datetime.now()) + '.txt', 'w')
 
 		# More shit that is exclusive to the pi
 		if running_on_pi:
@@ -146,11 +146,6 @@ class CAN:
 
 		# Initialize serial communication to CANdapter
 		self.initSerial()
-
-		# Start a loop for getting CAN messages
-		t = threading.Thread(target=self.serialRead)
-		t.daemon = True
-		t.start()
 
 		# Start a loop for getting speed
 		"""s = threading.Thread(target=self.getSpeed)

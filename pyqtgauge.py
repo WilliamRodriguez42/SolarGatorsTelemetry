@@ -11,7 +11,7 @@ from PyQt5.QtCore import *
 from PyQt5.QtQml import *
 from PyQt5.QtWidgets import QApplication
 
-import car_QML
+from Car import car_QML
 
 
 ##### Updater Class #####
