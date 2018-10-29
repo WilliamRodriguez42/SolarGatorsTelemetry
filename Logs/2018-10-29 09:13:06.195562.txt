@@ -1,0 +1,9 @@
+Watt Hours, 0.6553500000000001 kWh
+Pack Current, -0.1 A
+Pack Instant Voltage, 6553.5 V
+State Of Charge, 32767.5 %
+Relay Status, 65535 
+Pack Amp Hours, 6553.5 Ah
+Current Limit Status, -1 
+High Temperature, 65535 C
+Low Temperature, 65535 C
