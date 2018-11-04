@@ -96,6 +96,9 @@ ApplicationWindow {
         watt_Hours_val              = watt_Hours;
     }
 
+    function updateSpeed(speed){
+        speedVal = speed;
+    }
 
     /*
         QML Slot
@@ -118,6 +121,9 @@ ApplicationWindow {
         updatePack(pack_Amp_Hours, high_Temperature, low_Temperature, pack_Current, pack_Instant_Voltage, state_Of_Charge, relay_Status, watt_Hours)
     }
 
+    function onSpeedUpdate(speed){
+        updateSpeed(speed);
+    }
 
 
     //Logo
@@ -435,7 +441,7 @@ ApplicationWindow {
 
 
 
-    //Speed
+    //Pack
     Item {
         id: pack
         width: 1
@@ -543,6 +549,7 @@ ApplicationWindow {
 
     }
 
+    //Speed
     Item {
         id: speed
         transformOrigin: Item.Center
