@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include "qcustomplot.h"
 #include <QDebug>
+#include <QTimer>
 
 MainWindow::MainWindow(QWidget *parent) :
   QMainWindow(parent),
@@ -45,7 +46,7 @@ MainWindow::MainWindow(QWidget *parent) :
   ui->Graph1->legend->setFont(legendFont);
   ui->Graph1->legend->setSelectedFont(legendFont);
   ui->Graph1->legend->setSelectableParts(QCPLegend::spItems); // legend box shall not be selectable, only legend items
-  
+  this->ui->Graph1->addGraph();
   //addRandomGraph();
   //addRandomGraph();
   //addRandomGraph();
@@ -94,7 +95,7 @@ MainWindow::MainWindow(QWidget *parent) :
   ui->Graph2->legend->setFont(legendFont);
   ui->Graph2->legend->setSelectedFont(legendFont);
   ui->Graph2->legend->setSelectableParts(QCPLegend::spItems); // legend box shall not be selectable, only legend items
-  
+  this->ui->Graph2->addGraph();
   //addRandomGraph();
   //addRandomGraph();
   //addRandomGraph();
@@ -142,7 +143,7 @@ MainWindow::MainWindow(QWidget *parent) :
   ui->Graph3->legend->setFont(legendFont);
   ui->Graph3->legend->setSelectedFont(legendFont);
   ui->Graph3->legend->setSelectableParts(QCPLegend::spItems); // legend box shall not be selectable, only legend items
-  
+  this->ui->Graph3->addGraph();
   //addRandomGraph();
   //addRandomGraph();
   //addRandomGraph();
@@ -171,11 +172,41 @@ MainWindow::MainWindow(QWidget *parent) :
   ui->Graph3->setContextMenuPolicy(Qt::CustomContextMenu);
   connect(ui->Graph3, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuRequest3(QPoint)));
   
+  //make a call to a function that will re-plot the graphs every 0.1 seconds
+  startPlotting(10);
+  
+  //initialize the coordinate vectors
+  
+  //speedCoordinates = new QVector<QVector<double>>; //contains (references to) the full history of speed coordinates
+	QVector<double> emptyVectorA; //not sure how to initialize this without putting in any values that don't belong in there
+	speedCoordinates.append(emptyVectorA); //I'm afraid to reuse the same vector every time because vectors are weird about pointers
+  //batteryCoordinates = new QVector<QVector<double>>; //contains (references to) the full history of battery level coordinates
+	QVector<double> emptyVectorB; 
+	batteryCoordinates.append(emptyVectorB);
+ // powerCoordinates = new QVector<QVector<double>>; //contains (references to) the full history of power coordinates
+  QVector<double> emptyVectorC; 
+	powerCoordinates.append(emptyVectorC);
 }
 
 MainWindow::~MainWindow()
 {
   delete ui;
+}
+
+void MainWindow::startPlotting(int f) { //repeatedly calls setData() at frequency f
+	qDebug() << "I got to startPlotting; the frequency is" << f;
+	if (f < 0) { //check input for validity
+		f = f * -1;
+	}
+	else if (f == 0) {
+		f = 1;
+	}
+	
+	double period = 1000 * 1/(double)f; //now period is in terms of milliseconds
+	qDebug() << "about to do the timer thing I think; the period is" << period << "milliseconds";
+	QTimer *timer = new QTimer(this);
+	   connect(timer, SIGNAL(timeout()), this, SLOT(getData())); //this line is weird, it thinks there's an error
+	   timer->start((int)period);
 }
 
 void MainWindow::titleDoubleClick(QMouseEvent* event)
@@ -555,14 +586,69 @@ void MainWindow::toggleViewFrame3(bool state){ //toggles whether or not to show 
 	}  */
 } 
 
-//Update data in graph by calling this->ui->Graph1->setData(xval, yval)
 
+void MainWindow::getData() { //gets data and adds points to the coordinate vectors
+	//this should get called whenever there's new data, or maybe just at a fixed time interval
+	//gonna need to use the CAN thing
+	//might need to remove the parameter, not sure
+	//setData(newPoint);
+	qDebug("I got to getData");
+	
+	//add the coordinates to the graph data
+	this->ui->Graph1->graph(0)->setData(speedCoordinates.at(0), speedCoordinates.at(1));
+	
+	this->ui->Graph2->graph(0)->setData(batteryCoordinates.at(0), batteryCoordinates.at(1));
 
+	this->ui->Graph3->graph(0)->setData(powerCoordinates.at(0), powerCoordinates.at(1));
+	
+	
+	/*for (int i = 0; i < 101; ++i) {
+		const double d = i/50.0 - 1;
+		//this stuff isn't working and I don't know why, it's really annoying
+		speedCoordinates[0].append(d); // x goes from -1 to 1       
+		speedCoordinates[1].append(speedCoordinates[0][i] * speedCoordinates[0][i]); // let's plot a quadratic function
+	} 
+	
+	this->ui->Graph1->graph(0)->setData(speedCoordinates.at(0),speedCoordinates.at(1)); */
+	
+	
+	if (!(speedCoordinates.at(0).empty())) {
+		plotData();
+	}
+}
+/*void MainWindow::setData(QPoint thePoint) {
+	//add data to be plotted
+	QVector<double> x(101), y(101);
+	for (int i = 0; i < 101; ++i) {
+		x[i] = i/50.0 - 1; // x goes from -1 to 1
+		  y[i] = x[i]*x[i]; // let's plot a quadratic function
+	}
+}*/
+void MainWindow::plotData() {
+	//this should plot the new point(s?) on the graph 
+	//Update data in graph by calling this->ui->Graph1->setData(xval, yval) and then customPlot()->replot() (allegedly)
+	//this->ui->Graph1->setData
+	
+	
+	
+	qDebug() << "I got to plotData";
+	//check to make sure the coordinate things aren't empty
+	if (!(speedCoordinates.at(0).empty()) && !(speedCoordinates.at(1).empty())) {
+		this->ui->Graph1->replot();
+	}
+	if (!(batteryCoordinates.at(0).empty()) && !(batteryCoordinates.at(1).empty())) {
+		this->ui->Graph2->replot();
+	}
+	if (!(powerCoordinates.at(0).empty()) && !(powerCoordinates.at(1).empty())) {
+		this->ui->Graph3->replot();
+	}
+	qDebug() << "B";
+}
 
 void MainWindow::lol(bool unused) {
 	QMessageBox::warning(
 				this, 
-				"Too bad!", 
-				"You're out of luck!!",
+				"Ruh-Roh!", 
+				"Sorry kiddo, you know as much as I do.",
 				QMessageBox::Ok);	
 }

@@ -3,7 +3,7 @@
 
 #include <QMainWindow>
 #include <QInputDialog>
-#include "C:/Users/jonat/Documents/Qt_Projects/PitDisplay/qcustomplot.h"
+#include "qcustomplot.h"
 
 namespace Ui {
 class MainWindow;
@@ -16,14 +16,22 @@ class MainWindow : public QMainWindow
 public:
   explicit MainWindow(QWidget *parent = 0);
   ~MainWindow();
+	void startPlotting(int f);
+	
 	bool viewFrame1;
 	bool viewFrame2;
 	bool viewFrame3;
+	QList<QVector<double>> speedCoordinates; //contains (references to) the full history of speed coordinates
+	QList<QVector<double>> batteryCoordinates; //contains (references to) the full history of battery level coordinates
+	QList<QVector<double>> powerCoordinates; //contains (references to) the full history of power coordinates
 		
 public slots:
 		void toggleViewFrame1(bool state);
 		void toggleViewFrame2(bool state);
 		void toggleViewFrame3(bool state);
+		void getData();
+		//void setData(QPoint thePoint);
+		void plotData();
 		void lol(bool unused);
   
 private slots:
