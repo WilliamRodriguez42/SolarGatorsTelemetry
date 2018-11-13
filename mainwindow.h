@@ -22,13 +22,18 @@ public:
 	bool viewFrame2;
 	bool viewFrame3;
 	QList<QVector<double>> speedCoordinates; //contains (references to) the full history of speed coordinates
-	QList<QVector<double>> batteryCoordinates; //contains (references to) the full history of battery level coordinates
+	QList<QVector<double>> chargeCoordinates; //contains (references to) the full history of charge level coordinates
 	QList<QVector<double>> powerCoordinates; //contains (references to) the full history of power coordinates
-		
+	QList<QVector<double>> energyCoordinates; //contains (references to) the full history of energy coordinates
+	QList<QVector<double>> currentCoordinates; //contains (references to) the full history of current coordinates
+	QList<QVector<double>> voltageCoordinates; //contains (references to) the full history of instant coordinates
+	QList<QVector<double>> ampHourCoordinates; //contains (references to) the full history of pack amp hour coordinates
+	
 public slots:
 		void toggleViewFrame1(bool state);
 		void toggleViewFrame2(bool state);
 		void toggleViewFrame3(bool state);
+		void getUSBData(QString usbFileName);
 		void getData();
 		//void setData(QPoint thePoint);
 		void plotData();

@@ -27,13 +27,13 @@ car_CAN::car_CAN()
 
 // Other bullshit
 
-running_on_pi = False; // Change to true if you are running this program on a raspberry pi
+#define running_on_pi false; // Change to true if you are running this program on a raspberry pi
 
 
 
 // Logging
 
-max_files_to_keep = 10; // Maximum log files to keep
+int max_files_to_keep = 10; // Maximum log files to keep
 
 
 
@@ -51,24 +51,27 @@ if (running_on_pi) {
 
 
 
-class SubMessage{
 
-	def __init__(self, num, text, print_if_low){
+SubMessage::SubMessage(int num, QString text, bool print_if_low) {
+	this->text = text;
+	this->num = num;
+	this->print_if_low = print_if_low;
+}
+	/*def __init__(self, num, text, print_if_low){
 
 		this.text = text;
 
 		this.num = num;
 
 		this.print_if_low = print_if_low;
-	}
-}
+	}*/
 
 report = {};
 
 		
-class Message {
 
-	def __init__(self, text, multiplier, units, num_nibbles, isSigned=False){
+
+	/*def __init__(self, text, multiplier, units, num_nibbles, isSigned=False){
 
 		self.text = text;
 
@@ -89,18 +92,31 @@ class Message {
 		global report;
 
 		report[self.text] = self;
-	}
+	}*/
+Message::Message(QString text, int multiplier, enum units the_units, int num_nibbles, bool isSigned) {
+	this->text = text;
 
+	this->multiplier = multiplier;
+	
+	this->the_units = the_units;
+	
+	this->num_nibbles = num_nibbles;
+	
+	this->isSigned = isSigned; //I've changed the name of signed to isSigned because it was doing something weird
+	
+	this->sub_messages = nullptr;//convert this to a QList within messages I guess?
+	//sub_messages is a data structure that holds SubMessage objects I think
+	this->value = 0xFFFF;
+}
 
-	def get_true_value(self) {
-
-		return bytes_to_int(self.value, self.signed) * self.multiplier;
-	}
+int Message::get_true_value(){
+	return bytes_to_int(this->value, this->isSigned) * this->multiplier;
+}
 
 
 blank = Message('', 1, '', 1);
 
-}
+
 
 // All the submessages in current limit status
 
@@ -228,15 +244,18 @@ report['Current Limit Status'].sub_messages = current_limit_status;
 
 // Convert bytes to integer
 
-def bytes_to_int(bts, signed = True){
-
-	if signed{
-		return np.int16(bts);
+int bytes_to_int(char[] bts, signed = True){
+	int a = int((unsigned char)(buffer[0]) << 8 |
+			(unsigned char)(buffer[1]) << 0); //this will work for unsigned values
+	return a;
+	/*if signed{
+		//return np.int16(bts);
+		
 	}
 	
 	else {
-		return bts;
-	}
+		return a;
+	}*/
 }
 
 

@@ -586,6 +586,48 @@ void MainWindow::toggleViewFrame3(bool state){ //toggles whether or not to show 
 	}  */
 } 
 
+void MainWindow::getUSBData(QString usbFileName){ //this will read from the "file", i.e. the stuff coming across the USB 
+	//read from the USB "file"
+	//QFileInfo fi(usbFileName); 
+	QFile USB(usbFileName);//usbFileName gives the location of the USB thing
+	if (USB.open(QIODevice::ReadOnly | QIODevice::Text)) {
+		QTextStream in(&USB);
+		//in >>
+		QStringList line;
+		/*if(!in.atEnd()) {
+			//qDebug("it's at the end for some reason");
+		}*/
+		while (!(in.atEnd())) {
+			line = in.readLine().split(" ");
+			if (line.at(0) == "Watt Hours,") { //add a point to energyCoordinates
+				QVector energyCoordinate;
+				energyCoordinate.append(energyCoordinates.length() - 1);
+				energyCoordinate.append(line.at(1));
+				energyCoordinates.append(energyCoordinate);
+			}
+			else if (line.at(0) == "Pack" && line.at(1) == "Current") { //add a point to currentCoordinates
+				QVector currentCoordinate;
+				currentCoordinate.append(currentCoordinates.length() - 1);
+				currentCoordinate.append(line.at(2)); //this value could be negative, so make sure that's possible in the graph
+				currentCoordinates.append(currentCoordinate);
+			}
+			else if (line.at(0) == "Pack" && line.at(1) == "Instant" && line.at(2) == "Voltage") { //add a point to voltageCoordinates
+				QVector voltageCoordinate;
+				voltageCoordinate.append(voltageCoordinates.length() - 1);
+				voltageCoordinate.append(line.at(3)); 
+				voltageCoordinates.append(voltageCoordinate);
+			}
+			else if (line.at(0) == "State" && line.at(1) == "of" && line.at(2) == "Charge") { //add a point to chargeCoordinates
+				QVector chargeCoordinate;
+				chargeCoordinate.append(chargeCoordinates.length() - 1);
+				chargeCoordinate.append(line.at(3)); 
+				chargeCoordinates.append(chargeCoordinate);
+			}
+		}
+	}
+	//add points to speedCoordinates, batteryCoordinates, etc.
+	
+} 
 
 void MainWindow::getData() { //gets data and adds points to the coordinate vectors
 	//this should get called whenever there's new data, or maybe just at a fixed time interval
@@ -593,11 +635,11 @@ void MainWindow::getData() { //gets data and adds points to the coordinate vecto
 	//might need to remove the parameter, not sure
 	//setData(newPoint);
 	qDebug("I got to getData");
-	
+	getUSBData("C:\Users\jonat\Documents\Qt_Projects\Log.txt");
 	//add the coordinates to the graph data
 	this->ui->Graph1->graph(0)->setData(speedCoordinates.at(0), speedCoordinates.at(1));
 	
-	this->ui->Graph2->graph(0)->setData(batteryCoordinates.at(0), batteryCoordinates.at(1));
+	this->ui->Graph2->graph(0)->setData(chargeCoordinates.at(0), chargeCoordinates.at(1));
 
 	this->ui->Graph3->graph(0)->setData(powerCoordinates.at(0), powerCoordinates.at(1));
 	

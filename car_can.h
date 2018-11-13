@@ -5,47 +5,31 @@
 class SubMessage
 {
 	public: 
-		SubMessage(int num, QString text, bool print_if_low) {
-			this->text = text;
-			this->num = num;
-			this->print_if_low = print_if_low;
-		}
-	//int num;
-	//QString text;
-	//bool print_if_low;
-}
+		SubMessage(int num, QString text, bool print_if_low);
+		int num;
+		QString text;
+		bool print_if_low;
+};
 
 class Message {
 	public:
-		Message(QString text, int multiplier, enum units the_units, int num_nibbles, bool isSigned) {
-			this.text = text;
-	
-			this.multiplier = multiplier;
-	
-			this.the_units = the_units;
-	
-			this.num_nibbles = num_nibbles;
-	
-			this.isSigned = isSigned; //I've changed the name of signed to isSigned because it was doing something weird
-	
-			this.sub_messages = None;//convert this to a QList within messages I guess?
-			//sub_messages is a data structure that holds SubMessage objects I think
-			this.value = 0xFFFF;
-	
-			global report; //not sure what to do with this
-	
-			report[this.text] = this; //or this
-		}
+		Message(QString text, int multiplier, enum units the_units, int num_nibbles, bool isSigned);
+		int get_true_value();
 		
-		QList<SubMessage> sub_messages; //idk if this will work, I may have to do some rearranging of things to implement SubMessage
-		//int multiplier;
-		//QString units; //not sure what the type for this variable should be, maybe an enum?
+		QString text;
+		int multiplier;
 		enum units {MPH, VOLTS, WATTS, JOULES, PERCENT};
-		//enum units the_units; //check this, it might have to go in a constructor or something
-		//bool isSigned;
-		float value; //not sure about the type for this
-		
-}
+		enum units the_units; //check this, it might have to go in a constructor or something
+		int num_nibbles;
+		bool isSigned;
+		QList<SubMessage> sub_messages; //idk if this will work, I may have to do some rearranging of things to implement SubMessage
+		int value; //not sure about the type for this
+};
+
+//global report; //not sure what to do with this
+//report[this.text] = this; //or this
+
+//std::unordered_map<QString, Message> report; //I think this is what it's gonna have to be		
 
 			  
 class CAN{
@@ -95,7 +79,7 @@ class CAN{
 			self.log();
 			
 		}
-}
+};
 
 Struct report{};
 
