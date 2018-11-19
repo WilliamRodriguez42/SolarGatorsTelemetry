@@ -182,7 +182,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	speedCoordinates.append(emptyVectorA); //I'm afraid to reuse the same vector every time because vectors are weird about pointers
   //batteryCoordinates = new QVector<QVector<double>>; //contains (references to) the full history of battery level coordinates
 	QVector<double> emptyVectorB; 
-	batteryCoordinates.append(emptyVectorB);
+	chargeCoordinates.append(emptyVectorB);
  // powerCoordinates = new QVector<QVector<double>>; //contains (references to) the full history of power coordinates
   QVector<double> emptyVectorC; 
 	powerCoordinates.append(emptyVectorC);
@@ -600,27 +600,27 @@ void MainWindow::getUSBData(QString usbFileName){ //this will read from the "fil
 		while (!(in.atEnd())) {
 			line = in.readLine().split(" ");
 			if (line.at(0) == "Watt Hours,") { //add a point to energyCoordinates
-				QVector energyCoordinate;
+				QVector<double> energyCoordinate(2);
 				energyCoordinate.append(energyCoordinates.length() - 1);
-				energyCoordinate.append(line.at(1));
+				energyCoordinate.append((line.at(1)).toDouble());
 				energyCoordinates.append(energyCoordinate);
 			}
 			else if (line.at(0) == "Pack" && line.at(1) == "Current") { //add a point to currentCoordinates
-				QVector currentCoordinate;
+				QVector<double> currentCoordinate(2);
 				currentCoordinate.append(currentCoordinates.length() - 1);
-				currentCoordinate.append(line.at(2)); //this value could be negative, so make sure that's possible in the graph
+				currentCoordinate.append((line.at(2)).toDouble()); //this value could be negative, so make sure that's possible in the graph
 				currentCoordinates.append(currentCoordinate);
 			}
 			else if (line.at(0) == "Pack" && line.at(1) == "Instant" && line.at(2) == "Voltage") { //add a point to voltageCoordinates
-				QVector voltageCoordinate;
+				QVector<double> voltageCoordinate(2);
 				voltageCoordinate.append(voltageCoordinates.length() - 1);
-				voltageCoordinate.append(line.at(3)); 
+				voltageCoordinate.append((line.at(3)).toDouble()); 
 				voltageCoordinates.append(voltageCoordinate);
 			}
 			else if (line.at(0) == "State" && line.at(1) == "of" && line.at(2) == "Charge") { //add a point to chargeCoordinates
-				QVector chargeCoordinate;
+				QVector<double> chargeCoordinate(2);
 				chargeCoordinate.append(chargeCoordinates.length() - 1);
-				chargeCoordinate.append(line.at(3)); 
+				chargeCoordinate.append((line.at(3)).toDouble()); 
 				chargeCoordinates.append(chargeCoordinate);
 			}
 		}
@@ -678,7 +678,7 @@ void MainWindow::plotData() {
 	if (!(speedCoordinates.at(0).empty()) && !(speedCoordinates.at(1).empty())) {
 		this->ui->Graph1->replot();
 	}
-	if (!(batteryCoordinates.at(0).empty()) && !(batteryCoordinates.at(1).empty())) {
+	if (!(chargeCoordinates.at(0).empty()) && !(chargeCoordinates.at(1).empty())) {
 		this->ui->Graph2->replot();
 	}
 	if (!(powerCoordinates.at(0).empty()) && !(powerCoordinates.at(1).empty())) {
