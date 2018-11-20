@@ -18,6 +18,10 @@ MainWindow::MainWindow(QWidget *parent) :
 	//Help menu
 	this->connect(this->ui->actionHelp_me, SIGNAL(triggered(bool)), this, SLOT(lol(bool)));
 	
+//Messages
+	this->connect(this, SIGNAL(sig_DCL_Low_SOC(int, int)), this, SLOT(updateMessages(int, int)));
+	
+	
 	this->viewFrame1 = true;
 	this->viewFrame2 = true;
 	
@@ -623,6 +627,227 @@ void MainWindow::getUSBData(QString usbFileName){ //this will read from the "fil
 				chargeCoordinate.append((line.at(3)).toDouble()); 
 				chargeCoordinates.append(chargeCoordinate);
 			}
+			else if (line.at(0) == "Pack_Amp_Hours") { 
+				QVector<double> ampHourCoordinate(2);
+				currentCoordinate.append(ampHourCoordinates.length() - 1);
+				currentCoordinate.append((line.at(2)).toDouble()); 
+				currentCoordinates.append(ampHourCoordinate);
+			}
+			
+			//Messages
+			else if (line.at(0) == "DCL_Low_SOC") { //DCL_Low_SOC message
+				if (line.at(2) == "0") {
+					this->DCL_Low_SOC = false;					
+					emit this->sig_DCL_Low_SOC(0);
+				}
+				else {
+					this->DCL_Low_SOC = true;										
+					emit this->sig_DCL_Low_SOC(1);
+				}
+			}
+			else if (line.at(0) == "DCL_High_Cell_Resistance") { 
+				if (line.at(2) == "0") {
+					this->DCL_High_Cell_Resistance = false;					
+					emit this->sig_DCL_High_Cell_Resistance(0);
+				}
+				else {
+					emit this->sig_DCL_High_Cell_Resistance(1);					
+					this->DCL_High_Cell_Resistance = true;					
+				}
+			}
+			else if (line.at(0) == "DCL_Temperature") { 
+				if (line.at(2) == "0") {
+					this->DCL_Temperature = false; //this probably isn't applicable					
+					emit this->sig_DCL_Temperature(0);
+				}
+				else {
+					this->DCL_Temperature = true; //this probably isn't applicable										
+					emit this->sig_DCL_Temperature(1);
+				}
+			}
+			else if (line.at(0) == "DCL_Low_Cell_Voltage") { 
+				if (line.at(2) == "0") {
+					emit this->sig_DCL_Low_Cell_Voltage(0);
+					this->DCL_Low_Cell_Voltage = false;
+				}
+				else {
+					emit this->sig_DCL_Low_Cell_Voltage(1);
+					this->DCL_Low_Cell_Voltage = true;					
+				}
+			}
+			else if (line.at(0) == "DCL_Low_Pack_Voltage") { 
+				if (line.at(2) == "0") {
+					this->DCL_Low_Pack_Voltage = false;										
+					emit this->sig_DCL_Low_Pack_Voltage(0);
+				}
+				else {
+					this->DCL_Low_Pack_Voltage = true;															
+					emit this->sig_DCL_Low_Pack_Voltage(1);
+				}
+			}
+			else if (line.at(0) == "DCL_Voltage_Failsafe") { 
+				if (line.at(2) == "0") {
+					this->DCL_Voltage_Failsafe = false;
+					emit this->sig_DCL_Voltage_Failsafe(0);
+				}
+				else {
+					this->DCL_Voltage_Failsafe = true;					
+					emit this->sig_DCL_Voltage_Failsafe(1);
+				}
+			}
+			else if (line.at(0) == "CCL_High_SOC") { 
+				if (line.at(2) == "0") {
+					this->CCL_High_SOC = false;					
+					emit this->sig_CCL_High_SOC(0);
+				}
+				else {
+					this->CCL_High_SOC = true;										
+					emit this->sig_CCL_High_SOC(1);
+				}
+			}
+			else if (line.at(0) == "CCL_High_Cell_Resistance") { 
+				if (line.at(2) == "0") {
+					this->CCL_High_Cell_Resistance = false;
+					emit this->sig_CCL_High_Cell_Resistance(0);
+				}
+				else {
+					this->CCL_High_Cell_Resistance = true;					
+					emit this->sig_CCL_High_Cell_Resistance(1);
+				}
+			}
+			else if (line.at(0) == "CCL_Temperature") { 
+				if (line.at(2) == "0") {
+					this->CCL_Temperature = false;					
+					emit this->sig_CCL_Temperature(0);
+				}
+				else {
+					this->CCL_Temperature = true;										
+					emit this->sig_CCL_Temperature(1);
+				}
+			}
+			else if (line.at(0) == "CCL_High_Cell_Voltage") { 
+				if (line.at(2) == "0") {
+					this->CCL_High_Cell_Voltage = false;															
+					emit this->sig_CCL_High_Cell_Voltage(0);
+				}
+				else {
+					this->CCL_High_Cell_Voltage = true;																				
+					emit this->sig_CCL_High_Cell_Voltage(1);
+				}
+			}
+			else if (line.at(0) == "CCL_High_Pack_Voltage") { 
+				if (line.at(2) == "0") {
+					this->CCL_High_Pack_Voltage = false;																				
+					emit this->sig_CCL_High_Pack_Voltage(0);
+				}
+				else {
+					this->CCL_High_Pack_Voltage = true;																									
+					emit this->sig_CCL_High_Pack_Voltage(1);
+				}
+			}
+			else if (line.at(0) == "CCL_Charger_Latch") { 
+				if (line.at(2) == "0") {
+					this->CCL_Charger_Latch = false;																									
+					emit this->sig_CCL_Charger_Latch(0);
+				}
+				else {
+					this->CCL_Charger_Latch = true;																														
+					emit this->sig_CCL_Charger_Latch(1);
+				}
+			}
+			else if (line.at(0) == "discharge_relay_disabled") { 
+				if (line.at(2) == "0") {
+					this->discharge_relay_disabled = false;																														
+					emit this->sig_discharge_relay_disabled(0);
+				}
+				else {
+					this->discharge_relay_disabled = true;																																			
+					emit this->sig_discharge_relay_disabled(1);
+				}
+			}
+			else if (line.at(0) == "charge_relay_disabled") { 
+				if (line.at(2) == "0") {
+					this->charge_relay_disabled = false;																																			
+					emit this->sig_charge_relay_disabled(0);
+				}
+				else {
+					this->charge_relay_disabled = true;																																			
+					emit this->sig_charge_relay_disabled(1);
+				}
+			}
+			else if (line.at(0) == "charger_safety_disabled") { 
+				if (line.at(2) == "0") {
+					this->charger_safety_disabled = false;																																								
+					emit this->sig_charger_safety_disabled(0);
+				}
+				else {
+					this->charger_safety_disabled = true;																																													
+					emit this->sig_charger_safety_disabled(1);
+				}
+			}
+			else if (line.at(0) == "diagnostic_trouble_code_active") { 
+				if (line.at(2) == "0") {
+					this->diagnostic_trouble_code_active = false;																																													
+					emit this->sig_diagnostic_trouble_code_active(0);
+				}
+				else {
+					this->diagnostic_trouble_code_active = true;																																																		
+					emit this->sig_diagnostic_trouble_code_active(1);
+				}
+			}
+			else if (line.at(0) == "always_on_power_status") { 
+				if (line.at(2) == "0") {
+					this->always_on_power_status = false;																																																		
+					emit this->sig_always_on_power_status(0);
+				}
+				else {
+					this->always_on_power_status = true;																																																							
+					emit this->sig_always_on_power_status(1);
+				}
+			}
+			else if (line.at(0) == "is_ready_power_status") { 
+				if (line.at(2) == "0") {
+					this->is_ready_power_status = false;																																																		
+					emit this->sig_is_ready_power_status(0);
+				}
+				else {
+					this->is_ready_power_status = true;																																																							
+					emit this->sig_is_ready_power_status(1);
+				}
+			}
+			else if (line.at(0) == "is_charging_power_status") { 
+				if (line.at(2) == "0") {
+					this->is_charging_power_status = false;																																																							
+					emit this->sig_is_charging_power_status(0);
+				}
+				else {
+					this->is_charging_power_status = true;																																																												
+					emit this->sig_is_charging_power_status(1);
+				}
+			}
+			else if (line.at(0) == "High_Temperature") { 
+				if (line.at(2) == "0") {
+					this->High_Temperature = false;																																																												
+					emit this->sig_High_Temperature(0);
+				}
+				else {
+					this->High_Temperature = true;																																																																	
+					emit this->sig_High_Temperature(1);
+				}
+			}
+			else if (line.at(0) == "Low_Temperature") { 
+				if (line.at(2) == "0") {
+					this->Low_Temperature = false;																																																																	
+					emit this->sig_Low_Temperature(0);
+				}
+				else {
+					this->Low_Temperature = true;																																																																						
+					emit this->sig_Low_Temperature(1);
+				}
+			}
+			else if (line.at(0) == "Relay_Status") { 
+				emit this->sig_Relay_Status((line.at(2)).toDouble());
+			}
 		}
 	}
 	//add points to speedCoordinates, batteryCoordinates, etc.
@@ -685,6 +910,197 @@ void MainWindow::plotData() {
 		this->ui->Graph3->replot();
 	}
 	qDebug() << "B";
+}
+
+void MainWindow::updateMessages(int message, int value) {
+	switch(message) {
+		case 1: //DCL_Low_SOC
+			if (this->DCL_Low_SOC && value == 0) { //if the message was already showing and now must go away
+				//eliminate the message from the QTextBrowser
+			}
+			else if (!this->DCL_Low_SOC && value == 1) {//if the message wasn't showing before but needs to be
+			//add the message to the QTextBrowser
+				this->ui->messagesPane->append("<br>-Low S.O.C.");
+			}
+			break;
+		case 2:  //DCL_High_Cell_Resistance
+			if (this->DCL_High_Cell_Resistance && value == 0) { //if the message was already showing and now must go away
+				//eliminate the message from the QTextBrowser
+			}
+			else if (!this->DCL_High_Cell_Resistance && value == 1) {//if the message wasn't showing before but needs to be
+			//add the message to the QTextBrowser
+				this->ui->messagesPane->append("<br>-High Cell Resistance");
+			}
+			break;
+		case 3:  //DCL_Temperature
+			if (this->DCL_Temperature && value == 0) { //if the message was already showing and now must go away
+				//eliminate the message from the QTextBrowser
+			}
+			else if (!this->DCL_Temperature && value == 1) {//if the message wasn't showing before but needs to be
+			//add the message to the QTextBrowser
+				this->ui->messagesPane->append("<br>-Temperature is a thing?");				
+			}
+			break;
+		case 4:  //DCL_Low_Cell_Voltage
+			if (this->DCL_Low_Cell_Voltage && value == 0) { //if the message was already showing and now must go away
+				//eliminate the message from the QTextBrowser
+			}
+			else if (!this->DCL_Low_Cell_Voltage && value == 1) {//if the message wasn't showing before but needs to be
+			//add the message to the QTextBrowser
+			}
+			break;
+		case 5:  //DCL_Low_Pack_Voltage
+			if (this->DCL_Low_Pack_Voltage && value == 0) { //if the message was already showing and now must go away
+				//eliminate the message from the QTextBrowser
+			}
+			else if (!this->DCL_Low_Pack_Voltage && value == 1) {//if the message wasn't showing before but needs to be
+			//add the message to the QTextBrowser
+			}
+			break;
+		case 6:  //DCL_Voltage_Failsafe
+			if (this->DCL_Voltage_Failsafe && value == 0) { //if the message was already showing and now must go away
+				//eliminate the message from the QTextBrowser
+			}
+			else if (!this->DCL_Voltage_Failsafe && value == 1) {//if the message wasn't showing before but needs to be
+			//add the message to the QTextBrowser
+			}
+			break;
+		case 7:  //CCL_High_SOC
+			if (this->CCL_High_SOC && value == 0) { //if the message was already showing and now must go away
+				//eliminate the message from the QTextBrowser
+			}
+			else if (!this->CCL_High_SOC && value == 1) {//if the message wasn't showing before but needs to be
+			//add the message to the QTextBrowser
+			}
+			break;
+		case 8:  //CCL_High_Cell_Resistance
+			if (this->CCL_High_Cell_Resistance && value == 0) { //if the message was already showing and now must go away
+				//eliminate the message from the QTextBrowser
+			}
+			else if (!this->CCL_High_Cell_Resistance && value == 1) {//if the message wasn't showing before but needs to be
+			//add the message to the QTextBrowser
+			}
+			break;
+		case 9:  //CCL_Temperature
+			if (this->CCL_Temperature && value == 0) { //if the message was already showing and now must go away
+				//eliminate the message from the QTextBrowser
+			}
+			else if (!this->CCL_Temperature && value == 1) {//if the message wasn't showing before but needs to be
+			//add the message to the QTextBrowser
+			}
+			break;
+		case 10: //CCL_High_Cell_Voltage
+			if (this->CCL_High_Cell_Voltage && value == 0) { //if the message was already showing and now must go away
+				//eliminate the message from the QTextBrowser
+			}
+			else if (!this->CCL_High_Cell_Voltage && value == 1) {//if the message wasn't showing before but needs to be
+			//add the message to the QTextBrowser
+			}
+			break;
+		case 11: //CCL_High_Pack_Voltage
+			if (this->CCL_High_Pack_Voltage && value == 0) { //if the message was already showing and now must go away
+				//eliminate the message from the QTextBrowser
+			}
+			else if (!this->CCL_High_Pack_Voltage && value == 1) {//if the message wasn't showing before but needs to be
+			//add the message to the QTextBrowser
+			}
+			break;
+		case 12: //CCL_Charger_Latch
+			if (this->CCL_Charger_Latch && value == 0) { //if the message was already showing and now must go away
+				//eliminate the message from the QTextBrowser
+			}
+			else if (!this->CCL_Charger_Latch && value == 1) {//if the message wasn't showing before but needs to be
+			//add the message to the QTextBrowser
+			}
+			break;
+		case 13: //discharge_relay_disabled
+			if (this->discharge_relay_disabled && value == 0) { //if the message was already showing and now must go away
+				//eliminate the message from the QTextBrowser
+			}
+			else if (!this->discharge_relay_disabled && value == 1) {//if the message wasn't showing before but needs to be
+			//add the message to the QTextBrowser
+			}
+			break;
+		case 14: //charge_relay_disabled
+			if (this->charge_relay_disabled && value == 0) { //if the message was already showing and now must go away
+				//eliminate the message from the QTextBrowser
+			}
+			else if (!this->charge_relay_disabled && value == 1) {//if the message wasn't showing before but needs to be
+			//add the message to the QTextBrowser
+			}
+			break;
+		case 15: //charger_safety_disabled
+			if (this->charger_safety_disabled && value == 0) { //if the message was already showing and now must go away
+				//eliminate the message from the QTextBrowser
+			}
+			else if (!this->charger_safety_disabled && value == 1) {//if the message wasn't showing before but needs to be
+			//add the message to the QTextBrowser
+			}
+			break;
+		case 16: //diagnostic_trouble_code_active
+			if (this->diagnostic_trouble_code_active && value == 0) { //if the message was already showing and now must go away
+				//eliminate the message from the QTextBrowser
+			}
+			else if (!this->diagnostic_trouble_code_active && value == 1) {//if the message wasn't showing before but needs to be
+			//add the message to the QTextBrowser
+			}
+			break;
+		case 17: //always_on_power_status
+			if (this->always_on_power_status && value == 0) { //if the message was already showing and now must go away
+				//eliminate the message from the QTextBrowser
+			}
+			else if (!this->always_on_power_status && value == 1) {//if the message wasn't showing before but needs to be
+			//add the message to the QTextBrowser
+			}
+			break;
+		case 18: //is_ready_power_status
+			if (this->is_ready_power_status && value == 0) { //if the message was already showing and now must go away
+				//eliminate the message from the QTextBrowser
+			}
+			else if (!this->is_ready_power_status && value == 1) {//if the message wasn't showing before but needs to be
+			//add the message to the QTextBrowser
+			}
+			break;
+		case 19: //is_charging_power_status
+			if (this->is_charging_power_status && value == 0) { //if the message was already showing and now must go away
+				//eliminate the message from the QTextBrowser
+			}
+			else if (!this->is_charging_power_status && value == 1) {//if the message wasn't showing before but needs to be
+			//add the message to the QTextBrowser
+			}
+			break;
+		case 20: //High_Temperature
+			if (this->High_Temperature && value == 0) { //if the message was already showing and now must go away
+				//eliminate the message from the QTextBrowser
+			}
+			else if (!this->High_Temperature && value == 1) {//if the message wasn't showing before but needs to be
+			//add the message to the QTextBrowser
+			}
+			break;
+		case 21: //Low_Temperature
+			if (this->Low_Temperature && value == 0) { //if the message was already showing and now must go away
+				//eliminate the message from the QTextBrowser
+			}
+			else if (!this->Low_Temperature && value == 1) {//if the message wasn't showing before but needs to be
+			//add the message to the QTextBrowser
+			}
+			break;
+		case 22: //Relay_Status
+			/*if (this->Relay_Status && value == 0) { //if the message was already showing and now must go away
+				//eliminate the message from the QTextBrowser
+			}
+			else if (!this->Relay_Status && value == 1) {//if the message wasn't showing before but needs to be
+			//add the message to the QTextBrowser
+			}*/
+			//do something with the relay status...?
+			break;
+		default:
+			QMessageBox::warning(
+						this, 
+						"Error", 
+						"There was an error displaying a message.",
+						QMessageBox::Ok);
+	}
 }
 
 void MainWindow::lol(bool unused) {
