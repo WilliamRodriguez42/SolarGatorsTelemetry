@@ -34,7 +34,17 @@ class Message {
 			  
 class CAN{
 	public:
-		CAN{
+		CAN();
+		void initSerialThread();
+		void initSerial();
+		log();
+		getSpeed();
+		closeEvent();
+		
+		bool closing;
+		fileID log_file;
+		 ser;
+	/*	CAN{
 			self.closing = False; // Set to true if we are trying to close the program
 	
 			// Delete last log file if there are more than 9
@@ -79,6 +89,7 @@ class CAN{
 			self.log();
 			
 		}
+*/
 };
 
 Struct report{};
