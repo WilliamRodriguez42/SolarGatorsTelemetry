@@ -27,7 +27,8 @@ MainWindow::MainWindow(QWidget *parent) :
 	
 	this->ui->Frame1->show();
 	this->ui->Frame2->show();
-	
+
+	index = 0;	
 
 //Graph1
   //srand(QDateTime::currentDateTime().toTime_t());
@@ -593,16 +594,23 @@ void MainWindow::toggleViewFrame3(bool state){ //toggles whether or not to show 
 void MainWindow::getUSBData(QString usbFileName){ //this will read from the "file", i.e. the stuff coming across the USB 
 	//read from the USB "file"
 	//QFileInfo fi(usbFileName); 
+	qDebug("getUSBData");
+	qDebug() << "Here's usbFileName:" << usbFileName;
 	QFile USB(usbFileName);//usbFileName gives the location of the USB thing
+	qDebug("A0");
+	//it's not opening the file for some reason...
 	if (USB.open(QIODevice::ReadOnly | QIODevice::Text)) {
+		qDebug("A0.5");
 		QTextStream in(&USB);
 		//in >>
 		QStringList line;
 		/*if(!in.atEnd()) {
 			//qDebug("it's at the end for some reason");
 		}*/
+		qDebug("A1");		
 		while (!(in.atEnd())) {
 			line = in.readLine().split(" ");
+			qDebug("A2");			
 			if (line.at(0) == "Watt Hours,") { //add a point to energyCoordinates
 				QVector<double> energyCoordinate(2);
 				energyCoordinate.append(energyCoordinates.length() - 1);
@@ -629,9 +637,9 @@ void MainWindow::getUSBData(QString usbFileName){ //this will read from the "fil
 			}
 			else if (line.at(0) == "Pack_Amp_Hours") { 
 				QVector<double> ampHourCoordinate(2);
-				currentCoordinate.append(ampHourCoordinates.length() - 1);
-				currentCoordinate.append((line.at(2)).toDouble()); 
-				currentCoordinates.append(ampHourCoordinate);
+				ampHourCoordinate.append(ampHourCoordinates.length() - 1);
+				ampHourCoordinate.append((line.at(2)).toDouble()); 
+				ampHourCoordinates.append(ampHourCoordinate);
 			}
 			
 			//Messages
@@ -848,10 +856,11 @@ void MainWindow::getUSBData(QString usbFileName){ //this will read from the "fil
 			else if (line.at(0) == "Relay_Status") { 
 				emit this->sig_Relay_Status((line.at(2)).toDouble());
 			}
+			qDebug("A3");			
 		}
 	}
 	//add points to speedCoordinates, batteryCoordinates, etc.
-	
+	qDebug("nope");	
 } 
 
 void MainWindow::getData() { //gets data and adds points to the coordinate vectors
@@ -860,12 +869,18 @@ void MainWindow::getData() { //gets data and adds points to the coordinate vecto
 	//might need to remove the parameter, not sure
 	//setData(newPoint);
 	qDebug("I got to getData");
-	getUSBData("C:\Users\jonat\Documents\Qt_Projects\Log.txt");
+	getUSBData("C:/Users/jonat/Documents/Qt_Projects/Log.txt");
 	//add the coordinates to the graph data
-	this->ui->Graph1->graph(0)->setData(speedCoordinates.at(0), speedCoordinates.at(1));
-	
-	this->ui->Graph2->graph(0)->setData(chargeCoordinates.at(0), chargeCoordinates.at(1));
-
+	qDebug("also nope");
+	//maybe it's not working because the data's being set too late so it's trying to access data that hasn't been written yet 
+	//(and that's why it's saying index out of bounds)
+	if(speedCoordinates.length() >= (index + 1)) {
+		this->ui->Graph1->graph(0)->setData(speedCoordinates[index].at(0), speedCoordinates[index].at(1));		
+	}
+	qDebug("A");
+	if(chargeCoordinates.length() >= (index + 1)) {	
+		this->ui->Graph2->graph(0)->setData(chargeCoordinates.at(0), chargeCoordinates.at(1));
+	}
 	this->ui->Graph3->graph(0)->setData(powerCoordinates.at(0), powerCoordinates.at(1));
 	
 	
@@ -880,9 +895,13 @@ void MainWindow::getData() { //gets data and adds points to the coordinate vecto
 	
 	
 	if (!(speedCoordinates.at(0).empty())) {
+		qDebug("speedCoordinates is not empty");
 		plotData();
 	}
+	qDebug("B");
+	
 }
+
 /*void MainWindow::setData(QPoint thePoint) {
 	//add data to be plotted
 	QVector<double> x(101), y(101);
@@ -891,12 +910,11 @@ void MainWindow::getData() { //gets data and adds points to the coordinate vecto
 		  y[i] = x[i]*x[i]; // let's plot a quadratic function
 	}
 }*/
+
 void MainWindow::plotData() {
 	//this should plot the new point(s?) on the graph 
 	//Update data in graph by calling this->ui->Graph1->setData(xval, yval) and then customPlot()->replot() (allegedly)
 	//this->ui->Graph1->setData
-	
-	
 	
 	qDebug() << "I got to plotData";
 	//check to make sure the coordinate things aren't empty

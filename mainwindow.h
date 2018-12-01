@@ -57,6 +57,10 @@ public:
 	bool always_on_power_status;
 	bool is_ready_power_status;
 	bool is_charging_power_status;
+	bool High_Temperature;
+	bool Low_Temperature;
+	
+	int index; //index into graphs
 	
 public slots:
 		void toggleViewFrame1(bool state);
