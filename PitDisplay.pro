@@ -27,12 +27,12 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
     qcustomplot.cpp \
-    car_can.cpp
+    tmmessage.cpp
 
 HEADERS += \
         mainwindow.h \
     qcustomplot.h \
-    car_can.h
+    tmmessage.h
 
 FORMS += \
         mainwindow.ui

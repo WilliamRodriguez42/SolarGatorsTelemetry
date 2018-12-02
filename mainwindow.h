@@ -4,6 +4,12 @@
 #include <QMainWindow>
 #include <QInputDialog>
 #include "qcustomplot.h"
+#include "tmmessage.h"
+#include <string>
+#include <fstream>
+#include <sstream>
+#include <cstdio>
+#include <iostream>
 
 namespace Ui {
 class MainWindow;
@@ -31,6 +37,9 @@ public:
 	QList<QVector<double>> ampHourCoordinates; //contains (references to) the full history of pack amp hour coordinates
 	QList<QVector<double>> temperatureCoordinates;
 	
+    TMMessage tmm;
+    std::ifstream usbfp;
+
 	//some variables that I'm guessing are quantitative values?
 	//QList<QVector<double>> DCL_Low_SOCCoordinates;
 	//QList<QVector<double>> DCL_High_Cell_ResistanceCoordinates;
@@ -66,7 +75,7 @@ public slots:
 		void toggleViewFrame1(bool state);
 		void toggleViewFrame2(bool state);
 		void toggleViewFrame3(bool state);
-		void getUSBData(QString usbFileName);
+        bool getUSBData();
 		void getData();
 		//void setData(QPoint thePoint);
 		void plotData();

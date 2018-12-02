@@ -3,10 +3,18 @@
 #include "qcustomplot.h"
 #include <QDebug>
 #include <QTimer>
+#include "tmmessage.h"
+#include <string>
+#include <fstream>
+#include <sstream>
+#include <cstdio>
+#include <iostream>
 
 MainWindow::MainWindow(QWidget *parent) :
   QMainWindow(parent),
-  ui(new Ui::MainWindow)
+  ui(new Ui::MainWindow),
+  usbfp("C:\\Users\\Steven\\Documents\\Kids School\\SolarGator\\logfile.txt", std::ifstream::in)
+
 {
 	ui->setupUi(this);
 	
@@ -191,6 +199,9 @@ MainWindow::MainWindow(QWidget *parent) :
  // powerCoordinates = new QVector<QVector<double>>; //contains (references to) the full history of power coordinates
   QVector<double> emptyVectorC; 
 	powerCoordinates.append(emptyVectorC);
+
+    // for now, open the TM file by creating a TMMessage object in the constructor
+
 }
 
 MainWindow::~MainWindow()
@@ -591,24 +602,114 @@ void MainWindow::toggleViewFrame3(bool state){ //toggles whether or not to show 
 	}  */
 } 
 
-void MainWindow::getUSBData(QString usbFileName){ //this will read from the "file", i.e. the stuff coming across the USB 
+bool MainWindow::getUSBData(){ //this will read from the "file", i.e. the stuff coming across the USB
 	//read from the USB "file"
 	//QFileInfo fi(usbFileName); 
 	qDebug("getUSBData");
-	qDebug() << "Here's usbFileName:" << usbFileName;
-	QFile USB(usbFileName);//usbFileName gives the location of the USB thing
-	qDebug("A0");
+    //qDebug() << "Here's usbFileName:" << usbFileName;
+    //QFile USB(usbFileName);//usbFileName gives the location of the USB thing
+    bool cont = true;
+    bool op = usbfp.is_open();
+    if (!op) {
+        qDebug("usb file is not open");
+        return false;
+    }
+    std::string str;
+    // get the next line from the file
+    std::getline(usbfp,str);
+
+    if (!usbfp.good()) {
+        return false;
+    }
+
+    auto pos = str.find(",");   // read past the comma in the string
+    std::string token = str.substr(0,pos);
+    std::string rem = str.substr(pos+1);
+    std::stringstream srem(rem);
+
+    if (token == "Watt Hours"){
+        double WattHours;
+        srem >> WattHours;              // kWh
+        qDebug() << " Watt hours is " << WattHours;
+        QVector<double> energyCoordinate(2);
+        energyCoordinate.append(energyCoordinates.length() - 1);
+        energyCoordinate.append(WattHours);
+        energyCoordinates.append(energyCoordinate);
+    }
+    if (token == "Pack Current"){
+        double PackCurrent;
+        srem >> PackCurrent;            // Amps
+        qDebug() << " PackCurrent is " << PackCurrent ;
+        QVector<double> currentCoordinate(2);
+        currentCoordinate.append(currentCoordinates.length() - 1);
+        currentCoordinate.append(PackCurrent); //this value could be negative, so make sure that's possible in the graph
+        currentCoordinates.append(currentCoordinate);
+
+    }
+    if (token == "Pack Instant Voltage"){
+        double PackInstantVoltage;
+        srem >> PackInstantVoltage;     // Volts
+        qDebug() << " PackInstantVoltage is " << PackInstantVoltage;
+        QVector<double> voltageCoordinate(2);
+        voltageCoordinate.append(voltageCoordinates.length() - 1);
+        voltageCoordinate.append(PackInstantVoltage);
+        voltageCoordinates.append(voltageCoordinate);
+    }
+    if (token == "State Of Charge"){
+        double StateOfCharge;
+        srem >> StateOfCharge;          // %
+        qDebug() << " StateOfCharge is " << StateOfCharge ;
+        QVector<double> chargeCoordinate(2);
+        chargeCoordinate.append(chargeCoordinates.length() - 1);
+        chargeCoordinate.append(StateOfCharge);
+        chargeCoordinates.append(chargeCoordinate);
+    }
+    if (token == "Relay Status"){
+        double     RelayStatus;
+        srem >> RelayStatus;
+        qDebug()  << " RelayStatus is " << RelayStatus ;
+        emit this->sig_Relay_Status(RelayStatus);
+    }
+    if (token == "Pack Amp Hours"){
+        double PackAmpHours;
+        srem >> PackAmpHours;           // Ah
+        qDebug() << " PackAmpHours is " << PackAmpHours ;
+        QVector<double> ampHourCoordinate(2);
+        ampHourCoordinate.append(ampHourCoordinates.length() - 1);
+        ampHourCoordinate.append(PackAmpHours);
+        ampHourCoordinates.append(ampHourCoordinate);
+    }
+    if (token == "Current Limit Status"){
+        int     CurrentLimitStatus;
+        srem >> CurrentLimitStatus;
+        qDebug()  << " CurrentLimitStatus is " << CurrentLimitStatus ;
+    }
+    if (token == "High Temperature"){
+        int     HighTemperature;        // C
+        srem >> HighTemperature;        // C
+        qDebug()  << " HighTemperature is " << HighTemperature ;
+    }
+    if (token == "Low Temperature"){
+        int     LowTemperature;         // C
+        srem >> LowTemperature;         // C
+        qDebug()  << " LowTemperature is " << LowTemperature ;
+    }
+
+    qDebug("A0");
 	//it's not opening the file for some reason...
-	if (USB.open(QIODevice::ReadOnly | QIODevice::Text)) {
-		qDebug("A0.5");
-		QTextStream in(&USB);
+    //if (USB.open(QIODevice::ReadOnly | QIODevice::Text)) {
+    //if (cont) {
+    //    qDebug("A0.5");
+        //QTextStream in(&USB);
 		//in >>
-		QStringList line;
+    //	QStringList line;
 		/*if(!in.atEnd()) {
 			//qDebug("it's at the end for some reason");
 		}*/
-		qDebug("A1");		
-		while (!(in.atEnd())) {
+      //  qDebug("A1");
+
+
+/*		while (!(in.atEnd())) {
 			line = in.readLine().split(" ");
 			qDebug("A2");			
 			if (line.at(0) == "Watt Hours,") { //add a point to energyCoordinates
@@ -857,8 +958,8 @@ void MainWindow::getUSBData(QString usbFileName){ //this will read from the "fil
 				emit this->sig_Relay_Status((line.at(2)).toDouble());
 			}
 			qDebug("A3");			
-		}
-	}
+        } */
+    //}
 	//add points to speedCoordinates, batteryCoordinates, etc.
 	qDebug("nope");	
 } 
@@ -869,13 +970,13 @@ void MainWindow::getData() { //gets data and adds points to the coordinate vecto
 	//might need to remove the parameter, not sure
 	//setData(newPoint);
 	qDebug("I got to getData");
-	getUSBData("C:/Users/jonat/Documents/Qt_Projects/Log.txt");
+    getUSBData();
 	//add the coordinates to the graph data
 	qDebug("also nope");
 	//maybe it's not working because the data's being set too late so it's trying to access data that hasn't been written yet 
 	//(and that's why it's saying index out of bounds)
 	if(speedCoordinates.length() >= (index + 1)) {
-		this->ui->Graph1->graph(0)->setData(speedCoordinates[index].at(0), speedCoordinates[index].at(1));		
+        this->ui->Graph1->graph(0)->setData(speedCoordinates.at(0), speedCoordinates.at(1));
 	}
 	qDebug("A");
 	if(chargeCoordinates.length() >= (index + 1)) {	
