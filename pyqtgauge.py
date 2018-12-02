@@ -12,6 +12,7 @@ from PyQt5.QtQml import *
 from PyQt5.QtWidgets import QApplication
 
 from Car import car_QML
+from Strategy import pro_strats
 
 
 ##### Updater Class #####
@@ -26,6 +27,7 @@ class UpdaterClass(QObject):
 	CCL     = pyqtSignal(float, float, float, float, float, float)
 	relays  = pyqtSignal(int, int, int, int, int, int, int)
 	pack    = pyqtSignal(float, float, float, float, float, float, float, float)
+	speed   = pyqtSignal(float, float, float)
 
 	def __init__(self, parent=None):
 		super(UpdaterClass, self).__init__(parent)
@@ -41,12 +43,17 @@ class UpdaterClass(QObject):
 
 	def pack_update(self):
 		self.pack.emit(car_QML.Pack_Amp_Hours, car_QML.High_Temperature, car_QML.Low_Temperature, car_QML.Pack_Current, car_QML.Pack_Instant_Voltage, car_QML.State_Of_Charge, car_QML.Relay_Status, car_QML.Watt_Hours)
+
+	def speed_update(self):
+		self.speed.emit(pro_strats.speed, pro_strats.optimumSpeedLow, pro_strats.optimumSpeedHigh)
+		
 ##### END Updater Class #####
 
 
 
 ##### Data Collection Threads #####
 # This will pull the data from CANBUS via car_QML.py via car_CAN.py
+# This will also calculate strategy data via pro_strats
 class DataLoop(QThread):
 
 	def __init__(self):
@@ -58,7 +65,8 @@ class DataLoop(QThread):
 	def run(self):
 		while True:
 			car_QML.update()        #Call updater function in car_QML
-			self.msleep(150)
+			pro_strats.update()     #Call updater function in pro_strats
+			self.msleep(100)
 
 ##### END Data Collection Threads #####
 
@@ -92,6 +100,7 @@ if __name__ == "__main__":
 	updater.CCL.connect(root.onCCLUpdate)
 	updater.relays.connect(root.onRelaysUpdate)
 	updater.pack.connect(root.onPackUpdate)
+	updater.speed.connect(root.onSpeedUpdate)
 
 	# Create timers for update signals
 	updateTimer = QTimer()
@@ -102,19 +111,27 @@ if __name__ == "__main__":
 	updateTimer3.start(50)
 	updateTimer4 = QTimer()
 	updateTimer4.start(50)
+	updateTimer5 = QTimer()
+	updateTimer5.start(50)
 
 	# Connect QTimers to emits
 	updateTimer.timeout.connect(updater.dcl_update)
 	updateTimer2.timeout.connect(updater.ccl_update)
 	updateTimer3.timeout.connect(updater.relays_update)
 	updateTimer4.timeout.connect(updater.pack_update)
+	updateTimer5.timeout.connect(updater.speed_update)
 
 	# Run data collection thread
 	dataLoop = DataLoop()
 	dataLoop.start()
 
-	# Runs the app, and exits Python on GUI exit
-	sys.exit(app.exec_())
+	# Runs the app
+	app.exec_()
+
+        # Clean up?
+
+        # Exit the program
+	sys.exit()
 ##### END MAIN #####
 
 

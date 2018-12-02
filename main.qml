@@ -15,8 +15,12 @@ ApplicationWindow {
 
     //Our data is "stored" here
     //Properties must begin with lowercase
-    property real speedVal : 50
-    property real runtimeVal : 3600
+    property real speedVal                      : 20
+    property real runtimeVal                    : 3600
+
+    //Strategy additions
+    property real optimumSpeedLowVal            : 0
+    property real optimumSpeedHighVal           : 1
 
     property real dCL_Low_SOC_val               : 100
     property real dCL_High_Cell_Resistance_val  : 100
@@ -96,8 +100,11 @@ ApplicationWindow {
         watt_Hours_val              = watt_Hours;
     }
 
-    function updateSpeed(speed){
-        speedVal = speed;
+    function updateSpeed(speed, optimumSpeedLow, optimumSpeedHigh){
+        speedVal            = speed;
+        optimumSpeedLowVal  = optimumSpeedLow;
+        optimumSpeedHighVal = optimumSpeedHigh;
+        speedGauge.redraw() //redraws gauge with new optimumSpeeds
     }
 
     /*
@@ -121,8 +128,8 @@ ApplicationWindow {
         updatePack(pack_Amp_Hours, high_Temperature, low_Temperature, pack_Current, pack_Instant_Voltage, state_Of_Charge, relay_Status, watt_Hours)
     }
 
-    function onSpeedUpdate(speed){
-        updateSpeed(speed);
+    function onSpeedUpdate(speed, optimumSpeedLow, optimumSpeedHigh){
+        updateSpeed(speed, optimumSpeedLow, optimumSpeedHigh)
     }
 
 
@@ -139,7 +146,6 @@ ApplicationWindow {
 
 
     //Time
-
     Item {
         id: time
 
@@ -200,7 +206,7 @@ ApplicationWindow {
     }//end Time
 
 
-
+    //DCL
     Item {
         id: dcl
         width: 1
@@ -277,8 +283,9 @@ ApplicationWindow {
             font.pixelSize: 35
             horizontalAlignment: Text.AlignRight
         }
-    }
+    } //end DCL
 
+    //CCL
     Item {
         id: ccl
         width: 1
@@ -355,8 +362,9 @@ ApplicationWindow {
             font.pixelSize: 35
             horizontalAlignment: Text.AlignRight
         }
-    }
+    } //end CCL
 
+    //Status
     Item {
         id: statusIndicators
         width: 10
@@ -433,11 +441,7 @@ ApplicationWindow {
 
             visible: is_charging_power_status_val
         }
-
-
-
-
-    }
+    } //end Status
 
 
 
@@ -542,12 +546,7 @@ ApplicationWindow {
             font.pixelSize: 35
             horizontalAlignment: Text.AlignRight
         }
-
-
-
-
-
-    }
+    } //end Pack
 
     //Speed
     Item {
@@ -561,24 +560,47 @@ ApplicationWindow {
             height: 409
             stepSize: 0.001
 
+            signal redraw() //Signal for external update
+
             style: CircularGaugeStyle {
                 minimumValueAngle: -90
                 maximumValueAngle: 90
 
-                tickmarkLabel:Text {
-                    text: styleData.value
-                    font.pixelSize: Math.max(6, outerRadius * 0.1) //default size
-                    color: if(styleData.value >= 30 && styleData.value <= 70){
-                               if(styleData.value >= 45 && styleData.value <= 55){
-                                   return "#00FF00"
-                               }
-                               else {
-                                   return "#FFFF00"
-                               }
-                           }
-                           else {
-                               return "#FFFFFF"
-                           }
+            //Fills in gauge tickmarks to show optimum speed range
+                function degreesToRadians(degrees) {
+                    return degrees * (Math.PI / 180);
+                }
+
+                background: Canvas {
+                    id: canvas
+
+                    onPaint: {
+                        var ctx = getContext("2d");
+                        ctx.reset();
+
+                        ctx.beginPath();
+                        ctx.strokeStyle = "#00FF00";
+                        ctx.lineWidth = outerRadius * 0.025;
+
+                        ctx.arc(outerRadius, outerRadius, outerRadius - ctx.lineWidth / 2,
+                                degreesToRadians(valueToAngle(optimumSpeedLowVal) - 90), degreesToRadians(valueToAngle(optimumSpeedHighVal) - 90));
+                        ctx.stroke();
+                    }
+
+                    //Slot for external update
+                    Connections {
+                        target : speedGauge
+                        onRedraw : canvas.requestPaint()
+                    }
+
+                }
+
+                //Changes gauge tickmark color for better contrast
+                minorTickmark: Rectangle {
+                    visible: true
+                    implicitWidth: outerRadius * 0.01
+                    implicitHeight: outerRadius * 0.03
+                    color: (styleData.value >= optimumSpeedLowVal && styleData.value <= optimumSpeedHighVal) ? "#000000" : "#FFFFFF"
                 }
             }
 
@@ -593,16 +615,11 @@ ApplicationWindow {
             width: 30
             height: 33
 
-            color: (speedVal >= 45 && speedVal <= 55) ? "#00FF00" : "#FFFF00"
-            active: (speedVal >= 30 && speedVal <= 70) ? true : false
+            //If speed is within 10% of optimumSpeedHigh, display green; else display yellow
+            color: (speedVal >= (optimumSpeedHighVal * 0.90) && speedVal <= optimumSpeedHighVal) ? "#00FF00" : "#FFFF00"
+            active: (speedVal >= optimumSpeedLowVal && speedVal <= optimumSpeedHighVal) ? true : false
         }
-    }
-
-
-
-
-
-    //end Speed
+    } //end Speed
 
 
 }//end ApplicationWindow

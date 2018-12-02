@@ -137,7 +137,8 @@ class CAN:
 			files = glob.glob('*.txt')
 
 		# Create our log file
-		self.log_file = open('Logs/' + str(datetime.datetime.now()) + '.txt', 'w')
+		# Comment out for Windows Debugging
+		# self.log_file = open('Logs/' + str(datetime.datetime.now()) + '.txt', 'w')
 
 		# More shit that is exclusive to the pi
 		if running_on_pi:
@@ -269,4 +270,5 @@ class CAN:
 			self.ser.close()
 		self.closing = True
 
-can = CAN()
+# comment out for Windows debugging
+# can = CAN()
