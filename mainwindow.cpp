@@ -445,6 +445,16 @@ MainWindow::MainWindow(QWidget *parent) :
  // powerCoordinates = new QVector<QVector<double>>; //contains (references to) the full history of power coordinates
   QVector<double> emptyVectorC; 
 	powerCoordinates.append(emptyVectorC);
+	QVector<double> emptyVectorD; 
+	  energyCoordinates.append(emptyVectorD);
+	QVector<double> emptyVectorE;
+	currentCoordinates.append(emptyVectorE);
+	QVector<double> emptyVectorF;
+	voltageCoordinates.append(emptyVectorF);
+	QVector<double> emptyVectorG;
+	ampHourCoordinates.append(emptyVectorG);
+	QVector<double> emptyVectorH;
+	temperatureCoordinates.append(emptyVectorH);
 
     // for now, open the TM file by creating a TMMessage object in the constructor
 
@@ -1320,13 +1330,15 @@ void MainWindow::getData() { //gets data and adds points to the coordinate vecto
 
 void MainWindow::setZero(int var) {
 	qDebug() << "setZero(" <<var<<")";
-	const QList<QVector<double>> q;
+	const QVector<double> q;
 	
 	switch(var) {
 		case 0: //speed
 			speedCoordinates[0].append(0);
-			qDebug() << "speedCoordinates[0] has length" << speedCoordinates[0].length();
+			
+			
 			speedCoordinates.append(q);
+			
 			qDebug() << "speedCoordinates has length" << speedCoordinates.length();
 			
 			speedCoordinates[1].append(0);
@@ -1336,6 +1348,8 @@ void MainWindow::setZero(int var) {
 		case 1: //charge
 			chargeCoordinates[0].append(0);
 			chargeCoordinates.append(q);
+			qDebug() << "chargeCoordinates[0] has length" << chargeCoordinates[0].length();
+			qDebug() << "chargeCoordinates has length" << chargeCoordinates.length();
 			
 			chargeCoordinates[1].append(0);
 			break;
@@ -1346,9 +1360,14 @@ void MainWindow::setZero(int var) {
 			powerCoordinates[1].append(0);
 			break;
 		case 3: //energy
+			qDebug("blah");
+			qDebug() << "energyCoordinates has length" << energyCoordinates.length();						
+			qDebug() << "energyCoordinates[0] has length" << energyCoordinates[0].length();
+			qDebug() << "energyCoordinates[0] has length" << energyCoordinates[0].length();
+			
 			energyCoordinates[0].append(0);
 			energyCoordinates.append(q);
-			
+			qDebug() << "energyCoordinates has length" << energyCoordinates.length();			
 			energyCoordinates[1].append(0);
 			break;
 		case 4: //current
