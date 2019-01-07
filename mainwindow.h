@@ -4,7 +4,7 @@
 #include <QMainWindow>
 #include <QInputDialog>
 #include "qcustomplot.h"
-#include "tmmessage.h"
+//#include "tmmessage.h"
 #include <string>
 #include <fstream>
 #include <sstream>
@@ -37,7 +37,18 @@ public:
 	QList<QVector<double>> ampHourCoordinates; //contains (references to) the full history of pack amp hour coordinates
 	QList<QVector<double>> temperatureCoordinates;
 	
-    TMMessage tmm;
+	//int numFrames;	//number of frames that have happened so far
+	QList<int> numberVectors;	/*keeps track of the number of entries for each variable; see below for key
+	 *numberVectors[0] = number of speed coordinates 
+	 *numberVectors[1] = number of charge coordinates
+	 *numberVectors[2] = number of power coordinates
+	 *numberVectors[3] = number of energy coordinates
+	 *numberVectors[4] = number of current coordinates
+	 *numberVectors[5] = number of voltage coordinates
+	 *numberVectors[6] = number of ampHour coordinates
+	 *numberVectors[7] = number of temperature coordinates */
+
+	//TMMessage tmm;
     std::ifstream usbfp;
 
 	//some variables that I'm guessing are quantitative values?
@@ -77,6 +88,8 @@ public slots:
 		void toggleViewFrame3(bool state);
         bool getUSBData();
 		void getData();
+		void setZero(int var); //initializes a variable to 0 if no value is initially transmitted
+		void addRepeatValue(int var);
 		//void setData(QPoint thePoint);
 		void plotData();
 		void updateMessages(int message, int value);

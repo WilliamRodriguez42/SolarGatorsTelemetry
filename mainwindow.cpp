@@ -3,7 +3,7 @@
 #include "qcustomplot.h"
 #include <QDebug>
 #include <QTimer>
-#include "tmmessage.h"
+//#include "tmmessage.h"
 #include <string>
 #include <fstream>
 #include <sstream>
@@ -13,7 +13,7 @@
 MainWindow::MainWindow(QWidget *parent) :
   QMainWindow(parent),
   ui(new Ui::MainWindow),
-  usbfp("C:\\Users\\Steven\\Documents\\Kids School\\SolarGator\\logfile.txt", std::ifstream::in)
+  usbfp("C:\\Users\\jonat\\Documents\\Qt_Projects\\Log.txt", std::ifstream::in)
 
 {
 	ui->setupUi(this);
@@ -36,7 +36,13 @@ MainWindow::MainWindow(QWidget *parent) :
 	this->ui->Frame1->show();
 	this->ui->Frame2->show();
 
-	index = 0;	
+	index = 0;
+	//numFrames = 0;	
+	
+	//numberVectors = new QList<int>;
+	for (int i = 0; i < 8; i++) {
+		numberVectors.append(0);		
+	}
 
 //Graph1
   //srand(QDateTime::currentDateTime().toTime_t());
@@ -97,7 +103,7 @@ MainWindow::MainWindow(QWidget *parent) :
   ui->Graph2->axisRect()->setupFullAxesBox();
   
   ui->Graph2->plotLayout()->insertRow(0);
-  QCPTextElement *graph2Title = new QCPTextElement(ui->Graph2, "Battery Level", QFont("sans", 17, QFont::Bold));
+  QCPTextElement *graph2Title = new QCPTextElement(ui->Graph2, "Charge", QFont("sans", 17, QFont::Bold));
   ui->Graph2->plotLayout()->addElement(0, 0, graph2Title);
   
   ui->Graph2->xAxis->setLabel("x Axis label (e.g. time)");
@@ -145,7 +151,7 @@ MainWindow::MainWindow(QWidget *parent) :
   ui->Graph3->axisRect()->setupFullAxesBox();
   
   ui->Graph3->plotLayout()->insertRow(0);
-  QCPTextElement *graph3Title = new QCPTextElement(ui->Graph3, "Power?", QFont("sans", 17, QFont::Bold));
+  QCPTextElement *graph3Title = new QCPTextElement(ui->Graph3, "Power", QFont("sans", 17, QFont::Bold));
   ui->Graph3->plotLayout()->addElement(0, 0, graph3Title);
   
   ui->Graph3->xAxis->setLabel("Time");
@@ -184,6 +190,246 @@ MainWindow::MainWindow(QWidget *parent) :
   // setup policy and connect slot for context menu popup:
   ui->Graph3->setContextMenuPolicy(Qt::CustomContextMenu);
   connect(ui->Graph3, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuRequest3(QPoint)));
+  
+  //graph 4
+  ui->Graph4->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectAxes |
+                                  QCP::iSelectLegend | QCP::iSelectPlottables);
+  ui->Graph4->xAxis->setRange(-10, 10);
+  ui->Graph4->yAxis->setRange(-10, 10);
+  ui->Graph4->axisRect()->setupFullAxesBox();
+  
+  ui->Graph4->plotLayout()->insertRow(0);
+  QCPTextElement *graph4Title = new QCPTextElement(ui->Graph4, "Energy", QFont("sans", 17, QFont::Bold));
+  ui->Graph4->plotLayout()->addElement(0, 0, graph4Title);
+  
+  ui->Graph4->xAxis->setLabel("Time");
+  ui->Graph4->yAxis->setLabel("Power");
+  ui->Graph4->legend->setVisible(true);
+  //QFont legendFont = font();
+  legendFont.setPointSize(10);
+  ui->Graph4->legend->setFont(legendFont);
+  ui->Graph4->legend->setSelectedFont(legendFont);
+  ui->Graph4->legend->setSelectableParts(QCPLegend::spItems); // legend box shall not be selectable, only legend items
+  this->ui->Graph4->addGraph();
+  //addRandomGraph();
+  //addRandomGraph();
+  //addRandomGraph();
+  //addRandomGraph();
+  ui->Graph4->rescaleAxes();
+  
+  // connect slot that ties some axis selections together (especially opposite axes):
+  connect(ui->Graph4, SIGNAL(selectionChangedByUser()), this, SLOT(selectionChanged()));
+  // connect slots that takes care that when an axis is selected, only that direction can be dragged and zoomed:
+  connect(ui->Graph4, SIGNAL(mousePress(QMouseEvent*)), this, SLOT(mousePress()));
+  connect(ui->Graph4, SIGNAL(mouseWheel(QWheelEvent*)), this, SLOT(mouseWheel()));
+  
+  // make bottom and left axes transfer their ranges to top and right axes:
+  connect(ui->Graph4->xAxis, SIGNAL(rangeChanged(QCPRange)), ui->Graph4->xAxis2, SLOT(setRange(QCPRange)));
+  connect(ui->Graph4->yAxis, SIGNAL(rangeChanged(QCPRange)), ui->Graph4->yAxis2, SLOT(setRange(QCPRange)));
+  
+  // connect some interaction slots:
+  connect(ui->Graph4, SIGNAL(axisDoubleClick(QCPAxis*,QCPAxis::SelectablePart,QMouseEvent*)), this, SLOT(axisLabelDoubleClick(QCPAxis*,QCPAxis::SelectablePart)));
+  connect(ui->Graph4, SIGNAL(legendDoubleClick(QCPLegend*,QCPAbstractLegendItem*,QMouseEvent*)), this, SLOT(legendDoubleClick(QCPLegend*,QCPAbstractLegendItem*)));
+  connect(graph4Title, SIGNAL(doubleClicked(QMouseEvent*)), this, SLOT(titleDoubleClick(QMouseEvent*)));
+  
+  // connect slot that shows a message in the status bar when a graph is clicked:
+  connect(ui->Graph4, SIGNAL(plottableClick(QCPAbstractPlottable*,int,QMouseEvent*)), this, SLOT(graphClicked(QCPAbstractPlottable*,int)));
+  
+  // setup policy and connect slot for context menu popup:
+  ui->Graph4->setContextMenuPolicy(Qt::CustomContextMenu);
+  //connect(ui->Graph4, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuRequest3(QPoint)));
+  
+  //graph 5
+  ui->Graph5->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectAxes |
+                                  QCP::iSelectLegend | QCP::iSelectPlottables);
+  ui->Graph5->xAxis->setRange(-10, 10);
+  ui->Graph5->yAxis->setRange(-10, 10);
+  ui->Graph5->axisRect()->setupFullAxesBox();
+  
+  ui->Graph5->plotLayout()->insertRow(0);
+  QCPTextElement *graph5Title = new QCPTextElement(ui->Graph5, "Current", QFont("sans", 17, QFont::Bold));
+  ui->Graph5->plotLayout()->addElement(0, 0, graph5Title);
+  
+  ui->Graph5->xAxis->setLabel("Time");
+  ui->Graph5->yAxis->setLabel("Current");
+  ui->Graph5->legend->setVisible(true);
+  //QFont legendFont = font();
+  legendFont.setPointSize(10);
+  ui->Graph5->legend->setFont(legendFont);
+  ui->Graph5->legend->setSelectedFont(legendFont);
+  ui->Graph5->legend->setSelectableParts(QCPLegend::spItems); // legend box shall not be selectable, only legend items
+  this->ui->Graph5->addGraph();
+  //addRandomGraph();
+  //addRandomGraph();
+  //addRandomGraph();
+  //addRandomGraph();
+  ui->Graph5->rescaleAxes();
+  
+  // connect slot that ties some axis selections together (especially opposite axes):
+  connect(ui->Graph5, SIGNAL(selectionChangedByUser()), this, SLOT(selectionChanged()));
+  // connect slots that takes care that when an axis is selected, only that direction can be dragged and zoomed:
+  connect(ui->Graph5, SIGNAL(mousePress(QMouseEvent*)), this, SLOT(mousePress()));
+  connect(ui->Graph5, SIGNAL(mouseWheel(QWheelEvent*)), this, SLOT(mouseWheel()));
+  
+  // make bottom and left axes transfer their ranges to top and right axes:
+  connect(ui->Graph5->xAxis, SIGNAL(rangeChanged(QCPRange)), ui->Graph5->xAxis2, SLOT(setRange(QCPRange)));
+  connect(ui->Graph5->yAxis, SIGNAL(rangeChanged(QCPRange)), ui->Graph5->yAxis2, SLOT(setRange(QCPRange)));
+  
+  // connect some interaction slots:
+  connect(ui->Graph5, SIGNAL(axisDoubleClick(QCPAxis*,QCPAxis::SelectablePart,QMouseEvent*)), this, SLOT(axisLabelDoubleClick(QCPAxis*,QCPAxis::SelectablePart)));
+  connect(ui->Graph5, SIGNAL(legendDoubleClick(QCPLegend*,QCPAbstractLegendItem*,QMouseEvent*)), this, SLOT(legendDoubleClick(QCPLegend*,QCPAbstractLegendItem*)));
+  connect(graph5Title, SIGNAL(doubleClicked(QMouseEvent*)), this, SLOT(titleDoubleClick(QMouseEvent*)));
+  
+  // connect slot that shows a message in the status bar when a graph is clicked:
+  connect(ui->Graph5, SIGNAL(plottableClick(QCPAbstractPlottable*,int,QMouseEvent*)), this, SLOT(graphClicked(QCPAbstractPlottable*,int)));
+  
+  // setup policy and connect slot for context menu popup:
+  ui->Graph5->setContextMenuPolicy(Qt::CustomContextMenu);
+  //connect(ui->Graph4, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuRequest3(QPoint)));
+  
+  //graph 6
+  ui->Graph6->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectAxes |
+                                  QCP::iSelectLegend | QCP::iSelectPlottables);
+  ui->Graph6->xAxis->setRange(-10, 10);
+  ui->Graph6->yAxis->setRange(-10, 10);
+  ui->Graph6->axisRect()->setupFullAxesBox();
+  
+  ui->Graph6->plotLayout()->insertRow(0);
+  QCPTextElement *graph6Title = new QCPTextElement(ui->Graph6, "Voltage", QFont("sans", 17, QFont::Bold));
+  ui->Graph6->plotLayout()->addElement(0, 0, graph6Title);
+  
+  ui->Graph6->xAxis->setLabel("Time");
+  ui->Graph6->yAxis->setLabel("Voltage");
+  ui->Graph6->legend->setVisible(true);
+  //QFont legendFont = font();
+  legendFont.setPointSize(10);
+  ui->Graph6->legend->setFont(legendFont);
+  ui->Graph6->legend->setSelectedFont(legendFont);
+  ui->Graph6->legend->setSelectableParts(QCPLegend::spItems); // legend box shall not be selectable, only legend items
+  this->ui->Graph6->addGraph();
+  //addRandomGraph();
+  //addRandomGraph();
+  //addRandomGraph();
+  //addRandomGraph();
+  ui->Graph6->rescaleAxes();
+  
+  // connect slot that ties some axis selections together (especially opposite axes):
+  connect(ui->Graph6, SIGNAL(selectionChangedByUser()), this, SLOT(selectionChanged()));
+  // connect slots that takes care that when an axis is selected, only that direction can be dragged and zoomed:
+  connect(ui->Graph6, SIGNAL(mousePress(QMouseEvent*)), this, SLOT(mousePress()));
+  connect(ui->Graph6, SIGNAL(mouseWheel(QWheelEvent*)), this, SLOT(mouseWheel()));
+  
+  // make bottom and left axes transfer their ranges to top and right axes:
+  connect(ui->Graph6->xAxis, SIGNAL(rangeChanged(QCPRange)), ui->Graph6->xAxis2, SLOT(setRange(QCPRange)));
+  connect(ui->Graph6->yAxis, SIGNAL(rangeChanged(QCPRange)), ui->Graph6->yAxis2, SLOT(setRange(QCPRange)));
+  
+  // connect some interaction slots:
+  connect(ui->Graph6, SIGNAL(axisDoubleClick(QCPAxis*,QCPAxis::SelectablePart,QMouseEvent*)), this, SLOT(axisLabelDoubleClick(QCPAxis*,QCPAxis::SelectablePart)));
+  connect(ui->Graph6, SIGNAL(legendDoubleClick(QCPLegend*,QCPAbstractLegendItem*,QMouseEvent*)), this, SLOT(legendDoubleClick(QCPLegend*,QCPAbstractLegendItem*)));
+  connect(graph6Title, SIGNAL(doubleClicked(QMouseEvent*)), this, SLOT(titleDoubleClick(QMouseEvent*)));
+  
+  // connect slot that shows a message in the status bar when a graph is clicked:
+  connect(ui->Graph6, SIGNAL(plottableClick(QCPAbstractPlottable*,int,QMouseEvent*)), this, SLOT(graphClicked(QCPAbstractPlottable*,int)));
+  
+  // setup policy and connect slot for context menu popup:
+  ui->Graph6->setContextMenuPolicy(Qt::CustomContextMenu);
+  //connect(ui->Graph4, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuRequest3(QPoint)));
+  
+  //graph 7
+  ui->Graph7->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectAxes |
+                                  QCP::iSelectLegend | QCP::iSelectPlottables);
+  ui->Graph7->xAxis->setRange(-10, 10);
+  ui->Graph7->yAxis->setRange(-10, 10);
+  ui->Graph7->axisRect()->setupFullAxesBox();
+  
+  ui->Graph7->plotLayout()->insertRow(0);
+  QCPTextElement *graph7Title = new QCPTextElement(ui->Graph7, "Amp Hours", QFont("sans", 12, QFont::Bold));
+  ui->Graph7->plotLayout()->addElement(0, 0, graph7Title);
+  
+  ui->Graph7->xAxis->setLabel("Time");
+  ui->Graph7->yAxis->setLabel("Amp Hours");
+  ui->Graph7->legend->setVisible(true);
+  //QFont legendFont = font();
+  legendFont.setPointSize(10);
+  ui->Graph7->legend->setFont(legendFont);
+  ui->Graph7->legend->setSelectedFont(legendFont);
+  ui->Graph7->legend->setSelectableParts(QCPLegend::spItems); // legend box shall not be selectable, only legend items
+  this->ui->Graph7->addGraph();
+  //addRandomGraph();
+  //addRandomGraph();
+  //addRandomGraph();
+  //addRandomGraph();
+  ui->Graph7->rescaleAxes();
+  
+  // connect slot that ties some axis selections together (especially opposite axes):
+  connect(ui->Graph7, SIGNAL(selectionChangedByUser()), this, SLOT(selectionChanged()));
+  // connect slots that takes care that when an axis is selected, only that direction can be dragged and zoomed:
+  connect(ui->Graph7, SIGNAL(mousePress(QMouseEvent*)), this, SLOT(mousePress()));
+  connect(ui->Graph7, SIGNAL(mouseWheel(QWheelEvent*)), this, SLOT(mouseWheel()));
+  
+  // make bottom and left axes transfer their ranges to top and right axes:
+  connect(ui->Graph7->xAxis, SIGNAL(rangeChanged(QCPRange)), ui->Graph7->xAxis2, SLOT(setRange(QCPRange)));
+  connect(ui->Graph7->yAxis, SIGNAL(rangeChanged(QCPRange)), ui->Graph7->yAxis2, SLOT(setRange(QCPRange)));
+  
+  // connect some interaction slots:
+  connect(ui->Graph7, SIGNAL(axisDoubleClick(QCPAxis*,QCPAxis::SelectablePart,QMouseEvent*)), this, SLOT(axisLabelDoubleClick(QCPAxis*,QCPAxis::SelectablePart)));
+  connect(ui->Graph7, SIGNAL(legendDoubleClick(QCPLegend*,QCPAbstractLegendItem*,QMouseEvent*)), this, SLOT(legendDoubleClick(QCPLegend*,QCPAbstractLegendItem*)));
+  connect(graph7Title, SIGNAL(doubleClicked(QMouseEvent*)), this, SLOT(titleDoubleClick(QMouseEvent*)));
+  
+  // connect slot that shows a message in the status bar when a graph is clicked:
+  connect(ui->Graph7, SIGNAL(plottableClick(QCPAbstractPlottable*,int,QMouseEvent*)), this, SLOT(graphClicked(QCPAbstractPlottable*,int)));
+  
+  // setup policy and connect slot for context menu popup:
+  ui->Graph7->setContextMenuPolicy(Qt::CustomContextMenu);
+  //connect(ui->Graph4, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuRequest3(QPoint)));
+  
+  //graph 8
+  ui->Graph8->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectAxes |
+                                  QCP::iSelectLegend | QCP::iSelectPlottables);
+  ui->Graph8->xAxis->setRange(-10, 10);
+  ui->Graph8->yAxis->setRange(-10, 10);
+  ui->Graph8->axisRect()->setupFullAxesBox();
+  
+  ui->Graph8->plotLayout()->insertRow(0);
+  QCPTextElement *graph8Title = new QCPTextElement(ui->Graph7, "Temperature", QFont("sans", 12, QFont::Bold));
+  ui->Graph8->plotLayout()->addElement(0, 0, graph8Title);
+  
+  ui->Graph8->xAxis->setLabel("Time");
+  ui->Graph8->yAxis->setLabel("Temperature");
+  ui->Graph8->legend->setVisible(true);
+  //QFont legendFont = font();
+  legendFont.setPointSize(10);
+  ui->Graph8->legend->setFont(legendFont);
+  ui->Graph8->legend->setSelectedFont(legendFont);
+  ui->Graph8->legend->setSelectableParts(QCPLegend::spItems); // legend box shall not be selectable, only legend items
+  this->ui->Graph8->addGraph();
+  //addRandomGraph();
+  //addRandomGraph();
+  //addRandomGraph();
+  //addRandomGraph();
+  ui->Graph8->rescaleAxes();
+  
+  // connect slot that ties some axis selections together (especially opposite axes):
+  connect(ui->Graph8, SIGNAL(selectionChangedByUser()), this, SLOT(selectionChanged()));
+  // connect slots that takes care that when an axis is selected, only that direction can be dragged and zoomed:
+  connect(ui->Graph8, SIGNAL(mousePress(QMouseEvent*)), this, SLOT(mousePress()));
+  connect(ui->Graph8, SIGNAL(mouseWheel(QWheelEvent*)), this, SLOT(mouseWheel()));
+  
+  // make bottom and left axes transfer their ranges to top and right axes:
+  connect(ui->Graph8->xAxis, SIGNAL(rangeChanged(QCPRange)), ui->Graph8->xAxis2, SLOT(setRange(QCPRange)));
+  connect(ui->Graph8->yAxis, SIGNAL(rangeChanged(QCPRange)), ui->Graph8->yAxis2, SLOT(setRange(QCPRange)));
+  
+  // connect some interaction slots:
+  connect(ui->Graph8, SIGNAL(axisDoubleClick(QCPAxis*,QCPAxis::SelectablePart,QMouseEvent*)), this, SLOT(axisLabelDoubleClick(QCPAxis*,QCPAxis::SelectablePart)));
+  connect(ui->Graph8, SIGNAL(legendDoubleClick(QCPLegend*,QCPAbstractLegendItem*,QMouseEvent*)), this, SLOT(legendDoubleClick(QCPLegend*,QCPAbstractLegendItem*)));
+  connect(graph8Title, SIGNAL(doubleClicked(QMouseEvent*)), this, SLOT(titleDoubleClick(QMouseEvent*)));
+  
+  // connect slot that shows a message in the status bar when a graph is clicked:
+  connect(ui->Graph8, SIGNAL(plottableClick(QCPAbstractPlottable*,int,QMouseEvent*)), this, SLOT(graphClicked(QCPAbstractPlottable*,int)));
+  
+  // setup policy and connect slot for context menu popup:
+  ui->Graph8->setContextMenuPolicy(Qt::CustomContextMenu);
+  //connect(ui->Graph4, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuRequest3(QPoint)));
   
   //make a call to a function that will re-plot the graphs every 0.1 seconds
   startPlotting(10);
@@ -603,6 +849,9 @@ void MainWindow::toggleViewFrame3(bool state){ //toggles whether or not to show 
 } 
 
 bool MainWindow::getUSBData(){ //this will read from the "file", i.e. the stuff coming across the USB
+	//should this function be called at a fixed interval to check for new data (and just record previous value otherwise), 
+	//or should it only recieve data as it comes across?
+	
 	//read from the USB "file"
 	//QFileInfo fi(usbFileName); 
 	qDebug("getUSBData");
@@ -614,6 +863,8 @@ bool MainWindow::getUSBData(){ //this will read from the "file", i.e. the stuff 
         qDebug("usb file is not open");
         return false;
     }
+	else {qDebug("I opened the file");}
+	
     std::string str;
     // get the next line from the file
     std::getline(usbfp,str);
@@ -626,43 +877,71 @@ bool MainWindow::getUSBData(){ //this will read from the "file", i.e. the stuff 
     std::string token = str.substr(0,pos);
     std::string rem = str.substr(pos+1);
     std::stringstream srem(rem);
-
+	
+	if (token == "Speed"){
+        double Speed;
+        srem >> Speed;              // assuming the units are MPH
+        qDebug() << " Speed is " << Speed;
+        //QVector<double> speedCoordinate(2);
+        //speedCoordinate.append(speedCoordinates.length() - 1);
+        //speedCoordinate.append(Speed);
+        //speedCoordinates.append(speedCoordinate);
+		speedCoordinates[0].append(speedCoordinates[0].length());
+		//speedCoordinates.at(1).append(Speed);
+		speedCoordinates[1].append(Speed);
+		
+    }
     if (token == "Watt Hours"){
         double WattHours;
         srem >> WattHours;              // kWh
         qDebug() << " Watt hours is " << WattHours;
-        QVector<double> energyCoordinate(2);
-        energyCoordinate.append(energyCoordinates.length() - 1);
-        energyCoordinate.append(WattHours);
-        energyCoordinates.append(energyCoordinate);
+        //QVector<double> energyCoordinate(2);
+        //energyCoordinate.append(energyCoordinates.length() - 1);
+        //energyCoordinate.append(WattHours);
+        //energyCoordinates.append(energyCoordinate);
+		//energyCoordinates.at(0).append(energyCoordinates.length() - 1);
+		//energyCoordinates.at(1).append(WattHours);
+		energyCoordinates[0].append(energyCoordinates[0].length());
+		energyCoordinates[1].append(WattHours);
     }
     if (token == "Pack Current"){
         double PackCurrent;
         srem >> PackCurrent;            // Amps
         qDebug() << " PackCurrent is " << PackCurrent ;
-        QVector<double> currentCoordinate(2);
-        currentCoordinate.append(currentCoordinates.length() - 1);
-        currentCoordinate.append(PackCurrent); //this value could be negative, so make sure that's possible in the graph
-        currentCoordinates.append(currentCoordinate);
-
+        //QVector<double> currentCoordinate(2);
+        //currentCoordinate.append(currentCoordinates.length() - 1);
+        //currentCoordinate.append(PackCurrent); //this value could be negative, so make sure that's possible in the graph
+        //currentCoordinates.append(currentCoordinate);
+		currentCoordinates[0].append(currentCoordinates[0].length());
+		currentCoordinates[1].append(PackCurrent);
+		//currentCoordinates.at(0).append(currentCoordinates.length() - 1);
+		//currentCoordinates.at(1).append(PackCurrent);
     }
     if (token == "Pack Instant Voltage"){
         double PackInstantVoltage;
         srem >> PackInstantVoltage;     // Volts
         qDebug() << " PackInstantVoltage is " << PackInstantVoltage;
-        QVector<double> voltageCoordinate(2);
-        voltageCoordinate.append(voltageCoordinates.length() - 1);
-        voltageCoordinate.append(PackInstantVoltage);
-        voltageCoordinates.append(voltageCoordinate);
+        //QVector<double> voltageCoordinate(2);
+        //voltageCoordinate.append(voltageCoordinates.length() - 1);
+        //voltageCoordinate.append(PackInstantVoltage);
+        //voltageCoordinates.append(voltageCoordinate);
+		voltageCoordinates[0].append(voltageCoordinates[0].length());
+		voltageCoordinates[1].append(PackInstantVoltage);
+		//voltageCoordinates.at(0).append(voltageCoordinates.length() - 1);
+		//voltageCoordinates.at(1).append(PackInstantVoltage);
     }
     if (token == "State Of Charge"){
         double StateOfCharge;
         srem >> StateOfCharge;          // %
         qDebug() << " StateOfCharge is " << StateOfCharge ;
-        QVector<double> chargeCoordinate(2);
+        /*QVector<double> chargeCoordinate(2);
         chargeCoordinate.append(chargeCoordinates.length() - 1);
         chargeCoordinate.append(StateOfCharge);
-        chargeCoordinates.append(chargeCoordinate);
+        chargeCoordinates.append(chargeCoordinate);*/
+		chargeCoordinates[0].append(chargeCoordinates[0].length());
+		chargeCoordinates[1].append(StateOfCharge);
+		//chargeCoordinates.at(0).append(chargeCoordinates.length() - 1);
+		//chargeCoordinates.at(1).append(StateOfCharge);
     }
     if (token == "Relay Status"){
         double     RelayStatus;
@@ -674,10 +953,14 @@ bool MainWindow::getUSBData(){ //this will read from the "file", i.e. the stuff 
         double PackAmpHours;
         srem >> PackAmpHours;           // Ah
         qDebug() << " PackAmpHours is " << PackAmpHours ;
-        QVector<double> ampHourCoordinate(2);
+        /*QVector<double> ampHourCoordinate(2);
         ampHourCoordinate.append(ampHourCoordinates.length() - 1);
         ampHourCoordinate.append(PackAmpHours);
-        ampHourCoordinates.append(ampHourCoordinate);
+        ampHourCoordinates.append(ampHourCoordinate); */
+		ampHourCoordinates[0].append(ampHourCoordinates[0].length());
+		ampHourCoordinates[1].append(PackAmpHours);
+		//ampHourCoordinates.at(0).append(ampHourCoordinates.length() - 1);
+		//ampHourCoordinates.at(1).append(PackAmpHours);
     }
     if (token == "Current Limit Status"){
         int     CurrentLimitStatus;
@@ -971,19 +1254,51 @@ void MainWindow::getData() { //gets data and adds points to the coordinate vecto
 	//setData(newPoint);
 	qDebug("I got to getData");
     getUSBData();
+	index++;
+	qDebug() << "length of numberVectors is" << numberVectors.length();
+	for (int i = 0; i < numberVectors.length(); i++) {
+		qDebug() << "i =" << i;
+		if (numberVectors[i] == 0) { //if there have been no values transmitted yet
+			qDebug() << "numberVectors[" << i <<"] =" << numberVectors[i];
+			setZero(i); //initialize the variable to 0
+		}
+		
+		if(numberVectors[i] < index) {
+			qDebug() << "numberVectors[" << i <<"] =" << numberVectors[i];			
+			addRepeatValue(i); //the variable will hold the previous value for the current frame
+		} 
+	}
 	//add the coordinates to the graph data
 	qDebug("also nope");
 	//maybe it's not working because the data's being set too late so it's trying to access data that hasn't been written yet 
 	//(and that's why it's saying index out of bounds)
-	if(speedCoordinates.length() >= (index + 1)) {
+	qDebug() << "here is the length of speedCoordinates:" << speedCoordinates.length();
+	if(speedCoordinates.length() == 2) {
+	//if(speedCoordinates.length() >= (index + 1)) {
         this->ui->Graph1->graph(0)->setData(speedCoordinates.at(0), speedCoordinates.at(1));
 	}
 	qDebug("A");
-	if(chargeCoordinates.length() >= (index + 1)) {	
+	if(chargeCoordinates.length() == 2) {	
 		this->ui->Graph2->graph(0)->setData(chargeCoordinates.at(0), chargeCoordinates.at(1));
 	}
-	this->ui->Graph3->graph(0)->setData(powerCoordinates.at(0), powerCoordinates.at(1));
-	
+	if(powerCoordinates.length() == 2) {
+		this->ui->Graph3->graph(0)->setData(powerCoordinates.at(0), powerCoordinates.at(1));
+	}
+	if(energyCoordinates.length() == 2) {
+		this->ui->Graph4->graph(0)->setData(energyCoordinates.at(0), energyCoordinates.at(1));
+	}
+	if(currentCoordinates.length() == 2) {
+		this->ui->Graph5->graph(0)->setData(currentCoordinates.at(0), currentCoordinates.at(1));
+	}
+	if(voltageCoordinates.length() == 2) {
+		this->ui->Graph6->graph(0)->setData(voltageCoordinates.at(0), voltageCoordinates.at(1));
+	}
+	if(ampHourCoordinates.length() == 2) {
+		this->ui->Graph7->graph(0)->setData(ampHourCoordinates.at(0), ampHourCoordinates.at(1));
+	}
+	if(temperatureCoordinates.length() == 2) {
+		this->ui->Graph8->graph(0)->setData(temperatureCoordinates.at(0), temperatureCoordinates.at(1));
+	}
 	
 	/*for (int i = 0; i < 101; ++i) {
 		const double d = i/50.0 - 1;
@@ -1003,6 +1318,104 @@ void MainWindow::getData() { //gets data and adds points to the coordinate vecto
 	
 }
 
+void MainWindow::setZero(int var) {
+	qDebug() << "setZero(" <<var<<")";
+	const QList<QVector<double>> q;
+	
+	switch(var) {
+		case 0: //speed
+			speedCoordinates[0].append(0);
+			qDebug() << "speedCoordinates[0] has length" << speedCoordinates[0].length();
+			speedCoordinates.append(q);
+			qDebug() << "speedCoordinates has length" << speedCoordinates.length();
+			
+			speedCoordinates[1].append(0);
+			qDebug() << "speedCoordinates[1] has length" << speedCoordinates[1].length();
+			
+			break;
+		case 1: //charge
+			chargeCoordinates[0].append(0);
+			chargeCoordinates.append(q);
+			
+			chargeCoordinates[1].append(0);
+			break;
+		case 2: //power
+			powerCoordinates[0].append(0);
+			powerCoordinates.append(q);
+			
+			powerCoordinates[1].append(0);
+			break;
+		case 3: //energy
+			energyCoordinates[0].append(0);
+			energyCoordinates.append(q);
+			
+			energyCoordinates[1].append(0);
+			break;
+		case 4: //current
+			currentCoordinates[0].append(0);
+			currentCoordinates.append(q);
+			
+			currentCoordinates[1].append(0);
+			break;
+		case 5: //voltage
+			voltageCoordinates[0].append(0);
+			voltageCoordinates.append(q);
+			
+			voltageCoordinates[1].append(0);
+			break;
+		case 6: //ampHours
+			ampHourCoordinates[0].append(0);
+			ampHourCoordinates.append(q);
+			
+			ampHourCoordinates[1].append(0);
+			break;
+		case 7: //temperature
+			temperatureCoordinates[0].append(0);
+			temperatureCoordinates.append(q);
+			
+			temperatureCoordinates[1].append(0);
+			break;
+	}
+}
+
+void MainWindow::addRepeatValue(int var) {
+	//see key in MainWindow.h for variables
+	switch (var) { 
+		case 0: //add another speed coordinate with the same value as the previous frame
+			speedCoordinates[0].append(speedCoordinates[0].length());
+			speedCoordinates[1].append(speedCoordinates[1].at(speedCoordinates[1].length()-1));
+			break;
+		case 1: //charge
+			chargeCoordinates[0].append(chargeCoordinates[0].length());
+			chargeCoordinates[1].append(chargeCoordinates[1].at(chargeCoordinates[1].length()-1));
+			break;
+		case 2: //power
+			powerCoordinates[0].append(powerCoordinates[0].length());
+			powerCoordinates[1].append(powerCoordinates[1].at(powerCoordinates[1].length()-1));
+			break;
+		case 3: //energy
+			energyCoordinates[0].append(energyCoordinates[0].length());
+			energyCoordinates[1].append(energyCoordinates[1].at(energyCoordinates[1].length()-1));
+			break;
+		case 4: //current
+			currentCoordinates[0].append(currentCoordinates[0].length());
+			currentCoordinates[1].append(currentCoordinates[1].at(currentCoordinates[1].length()-1));
+			break;
+		case 5: //voltage
+			voltageCoordinates[0].append(voltageCoordinates[0].length());
+			voltageCoordinates[1].append(voltageCoordinates[1].at(voltageCoordinates[1].length()-1));
+			break;
+		case 6: //ampHours
+			ampHourCoordinates[0].append(ampHourCoordinates[0].length());
+			ampHourCoordinates[1].append(ampHourCoordinates[1].at(ampHourCoordinates[1].length()-1));
+			break;
+		case 7: //temperature
+			temperatureCoordinates[0].append(temperatureCoordinates[0].length());
+			temperatureCoordinates[1].append(temperatureCoordinates[1].at(temperatureCoordinates[1].length()-1));
+			break;
+	}
+}
+
 /*void MainWindow::setData(QPoint thePoint) {
 	//add data to be plotted
 	QVector<double> x(101), y(101);
@@ -1019,14 +1432,29 @@ void MainWindow::plotData() {
 	
 	qDebug() << "I got to plotData";
 	//check to make sure the coordinate things aren't empty
-	if (!(speedCoordinates.at(0).empty()) && !(speedCoordinates.at(1).empty())) {
+	if (!(speedCoordinates.at(0).empty()) && !(speedCoordinates.at(1).empty())) { //graph 1 = speed
 		this->ui->Graph1->replot();
 	}
-	if (!(chargeCoordinates.at(0).empty()) && !(chargeCoordinates.at(1).empty())) {
+	if (!(chargeCoordinates.at(0).empty()) && !(chargeCoordinates.at(1).empty())) { //graph 2 = charge
 		this->ui->Graph2->replot();
 	}
-	if (!(powerCoordinates.at(0).empty()) && !(powerCoordinates.at(1).empty())) {
+	if (!(powerCoordinates.at(0).empty()) && !(powerCoordinates.at(1).empty())) { //graph 3 = power
 		this->ui->Graph3->replot();
+	}
+	if (!(energyCoordinates.at(0).empty()) && !(energyCoordinates.at(1).empty())) { //graph 4 = energy
+		this->ui->Graph4->replot();
+	}
+	if (!(currentCoordinates.at(0).empty()) && !(currentCoordinates.at(1).empty())) { //graph 5 = current
+		this->ui->Graph5->replot();
+	}
+	if (!(voltageCoordinates.at(0).empty()) && !(voltageCoordinates.at(1).empty())) { //graph 6 = voltage
+		this->ui->Graph6->replot();
+	}
+	if (!(ampHourCoordinates.at(0).empty()) && !(ampHourCoordinates.at(1).empty())) { //graph 7 = amp hours
+		this->ui->Graph7->replot();
+	}
+	if (!(temperatureCoordinates.at(0).empty()) && !(temperatureCoordinates.at(1).empty())) { //graph 8 = temperature
+		this->ui->Graph8->replot();
 	}
 	qDebug() << "B";
 }
