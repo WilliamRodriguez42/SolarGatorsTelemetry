@@ -109,9 +109,9 @@ p, li { white-space: pre-wrap; }
        <property name="geometry">
         <rect>
          <x>0</x>
-         <y>0</y>
-         <width>648</width>
-         <height>905</height>
+         <y>-456</y>
+         <width>631</width>
+         <height>1361</height>
         </rect>
        </property>
        <layout class="QGridLayout" name="gridLayout_2">
@@ -140,7 +140,14 @@ p, li { white-space: pre-wrap; }
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_8">
               <item>
-               <widget class="QCustomPlot" name="Graph7" native="true"/>
+               <widget class="QCustomPlot" name="Graph7" native="true">
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>300</height>
+                 </size>
+                </property>
+               </widget>
               </item>
              </layout>
             </widget>
@@ -221,13 +228,26 @@ p, li { white-space: pre-wrap; }
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_9">
               <item>
-               <widget class="QCustomPlot" name="Graph8" native="true"/>
+               <widget class="QCustomPlot" name="Graph8" native="true">
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>300</height>
+                 </size>
+                </property>
+               </widget>
               </item>
              </layout>
             </widget>
            </item>
            <item row="2" column="0">
             <widget class="QFrame" name="Frame6">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>0</height>
+              </size>
+             </property>
              <property name="frameShape">
               <enum>QFrame::StyledPanel</enum>
              </property>
@@ -236,7 +256,14 @@ p, li { white-space: pre-wrap; }
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_7">
               <item>
-               <widget class="QCustomPlot" name="Graph6" native="true"/>
+               <widget class="QCustomPlot" name="Graph6" native="true">
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>300</height>
+                 </size>
+                </property>
+               </widget>
               </item>
              </layout>
             </widget>

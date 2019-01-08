@@ -57,8 +57,8 @@ MainWindow::MainWindow(QWidget *parent) :
   QCPTextElement *title = new QCPTextElement(ui->Graph1, "Speed", QFont("sans", 17, QFont::Bold));
   ui->Graph1->plotLayout()->addElement(0, 0, title);
   
-  ui->Graph1->xAxis->setLabel("x Axis");
-  ui->Graph1->yAxis->setLabel("y Axis");
+  ui->Graph1->xAxis->setLabel("Time");
+  ui->Graph1->yAxis->setLabel("Speed");
   ui->Graph1->legend->setVisible(true);
   QFont legendFont = font();
   legendFont.setPointSize(10);
@@ -391,7 +391,7 @@ MainWindow::MainWindow(QWidget *parent) :
   ui->Graph8->axisRect()->setupFullAxesBox();
   
   ui->Graph8->plotLayout()->insertRow(0);
-  QCPTextElement *graph8Title = new QCPTextElement(ui->Graph7, "Temperature", QFont("sans", 12, QFont::Bold));
+  QCPTextElement *graph8Title = new QCPTextElement(ui->Graph8, "Temperature", QFont("sans", 12, QFont::Bold));
   ui->Graph8->plotLayout()->addElement(0, 0, graph8Title);
   
   ui->Graph8->xAxis->setLabel("Time");
