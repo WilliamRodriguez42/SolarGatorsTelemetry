@@ -12,6 +12,7 @@ from PyQt5.QtQml import *
 from PyQt5.QtWidgets import QApplication
 
 from Car import car_QML
+from Car import speed
 from Strategy import pro_strats
 
 
@@ -45,7 +46,7 @@ class UpdaterClass(QObject):
 		self.pack.emit(car_QML.Pack_Amp_Hours, car_QML.High_Temperature, car_QML.Low_Temperature, car_QML.Pack_Current, car_QML.Pack_Instant_Voltage, car_QML.State_Of_Charge, car_QML.Relay_Status, car_QML.Watt_Hours)
 
 	def speed_update(self):
-		self.speed.emit(pro_strats.speed, pro_strats.optimumSpeedLow, pro_strats.optimumSpeedHigh)
+		self.speed.emit(speed.speed, pro_strats.optimumSpeedLow, pro_strats.optimumSpeedHigh)
 		
 ##### END Updater Class #####
 
@@ -122,13 +123,16 @@ if __name__ == "__main__":
 	updateTimer5.timeout.connect(updater.speed_update)
 
 	# Run data collection thread
+	speed.startThread()
 	dataLoop = DataLoop()
 	dataLoop.start()
 
 	# Runs the app
+	root.showFullScreen()
 	app.exec_()
 
-        # Clean up?
+	# Clean up?
+	speed.stopThread()
 
         # Exit the program
 	sys.exit()
