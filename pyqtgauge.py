@@ -11,8 +11,7 @@ from PyQt5.QtCore import *
 from PyQt5.QtQml import *
 from PyQt5.QtWidgets import QApplication
 
-from Car import car_QML
-from Strategy import pro_strats
+from Car import speedo
 
 
 ##### Updater Class #####
@@ -23,29 +22,13 @@ from Strategy import pro_strats
 # Then we use that module.variable to emit a signal
 # e.g. car_QML.variable_name
 class UpdaterClass(QObject):        
-	DCL     = pyqtSignal(float, float, float, float, float, float)
-	CCL     = pyqtSignal(float, float, float, float, float, float)
-	relays  = pyqtSignal(int, int, int, int, int, int, int)
-	pack    = pyqtSignal(float, float, float, float, float, float, float, float)
-	speed   = pyqtSignal(float, float, float)
+	speed   = pyqtSignal(float)
 
 	def __init__(self, parent=None):
 		super(UpdaterClass, self).__init__(parent)
 
-	def dcl_update(self):
-		self.DCL.emit(car_QML.DCL_Low_SOC, car_QML.DCL_High_Cell_Resistance, car_QML.DCL_Temperature, car_QML.DCL_Low_Cell_Voltage, car_QML.DCL_Low_Pack_Voltage, car_QML.DCL_Voltage_Failsafe)
-
-	def ccl_update(self):
-		self.CCL.emit(car_QML.CCL_High_SOC, car_QML.CCL_High_Cell_Resistance, car_QML.CCL_Temperature, car_QML.CCL_High_Cell_Voltage, car_QML.CCL_High_Pack_Voltage, car_QML.CCL_Charger_Latch)
-
-	def relays_update(self):
-		self.relays.emit(car_QML.discharge_relay_disabled, car_QML.charge_relay_disabled, car_QML.charger_safety_disabled, car_QML.diagnostic_trouble_code_active, car_QML.always_on_power_status, car_QML.is_ready_power_status, car_QML.is_charging_power_status)
-
-	def pack_update(self):
-		self.pack.emit(car_QML.Pack_Amp_Hours, car_QML.High_Temperature, car_QML.Low_Temperature, car_QML.Pack_Current, car_QML.Pack_Instant_Voltage, car_QML.State_Of_Charge, car_QML.Relay_Status, car_QML.Watt_Hours)
-
 	def speed_update(self):
-		self.speed.emit(pro_strats.speed, pro_strats.optimumSpeedLow, pro_strats.optimumSpeedHigh)
+		self.speed.emit(speedo.speed)
 		
 ##### END Updater Class #####
 
@@ -64,8 +47,7 @@ class DataLoop(QThread):
 
 	def run(self):
 		while True:
-			car_QML.update()        #Call updater function in car_QML
-			pro_strats.update()     #Call updater function in pro_strats
+			speedo.update()        #Call updater function in placeholder
 			self.msleep(100)
 
 ##### END Data Collection Threads #####
@@ -96,30 +78,14 @@ if __name__ == "__main__":
 
 	# Connect PyQt signals to QML slots
 	# onXUpdate corresponds to the Slots made in QML
-	updater.DCL.connect(root.onDCLUpdate)
-	updater.CCL.connect(root.onCCLUpdate)
-	updater.relays.connect(root.onRelaysUpdate)
-	updater.pack.connect(root.onPackUpdate)
 	updater.speed.connect(root.onSpeedUpdate)
 
 	# Create timers for update signals
 	updateTimer = QTimer()
 	updateTimer.start(50)
-	updateTimer2 = QTimer()
-	updateTimer2.start(50)
-	updateTimer3 = QTimer()
-	updateTimer3.start(50)
-	updateTimer4 = QTimer()
-	updateTimer4.start(50)
-	updateTimer5 = QTimer()
-	updateTimer5.start(50)
 
 	# Connect QTimers to emits
-	updateTimer.timeout.connect(updater.dcl_update)
-	updateTimer2.timeout.connect(updater.ccl_update)
-	updateTimer3.timeout.connect(updater.relays_update)
-	updateTimer4.timeout.connect(updater.pack_update)
-	updateTimer5.timeout.connect(updater.speed_update)
+	updateTimer.timeout.connect(updater.speed_update)
 
 	# Run data collection thread
 	dataLoop = DataLoop()
@@ -127,8 +93,6 @@ if __name__ == "__main__":
 
 	# Runs the app
 	app.exec_()
-
-        # Clean up?
 
         # Exit the program
 	sys.exit()
