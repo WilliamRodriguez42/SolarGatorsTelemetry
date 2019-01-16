@@ -22,27 +22,27 @@ ApplicationWindow {
     property real optimumSpeedLowVal            : 0
     property real optimumSpeedHighVal           : 1
 
-    property real dCL_Low_SOC_val               : 100
-    property real dCL_High_Cell_Resistance_val  : 100
-    property real dCL_Temperature_val           : 100
-    property real dCL_Low_Cell_Voltage_val      : 100
-    property real dCL_Low_Pack_Voltage_val      : 100
-    property real dCL_Voltage_Failsafe_val      : 100
+    property string string_out_0_val            : "HI"
+    property string string_out_1_val  			: "HI"
+    property string string_out_2_val           	: "HI"
+    property string string_out_3_val      		: "HI"
+    property string string_out_4_val      		: "HI"
+    property string string_out_5_val      		: "HI"
 
-    property real cCL_High_SOC_val              : 100
-    property real cCL_High_Cell_Resistance_val  : 100
-    property real cCL_Temperature_val           : 100
-    property real cCL_High_Cell_Voltage_val     : 100
-    property real cCL_High_Pack_Voltage_val     : 100
-    property real cCL_Charger_Latch_val         : 100
+    property string string_out_6_val            : "HI"
+    property string string_out_7_val  			: "HI"
+    property string string_out_8_val           	: "HI"
+    property string string_out_9_val     		: "HI"
+    property string string_out_10_val    	 	: "HI"
+    property string string_out_11_val         	: "HI"
 
-    property int discharge_relay_disabled_val       : 0
-    property int charge_relay_disabled_val          : 0
-    property int charger_safety_disabled_val        : 0
-    property int diagnostic_trouble_code_active_val : 1
-    property int always_on_power_status_val         : 1
-    property int is_ready_power_status_val          : 1
-    property int is_charging_power_status_val       : 1
+    property int blinker0_val       	: 0
+    property int blinker1_val           : 0
+    property int blinker2_val        	: 0
+    property int warning_val 			: 1
+    property int power_plug_val         : 1
+    property int loopy_infinity_val     : 1
+    property int okay_val       		: 1
 
     property real pack_Amp_Hours_val        : 100
     property real high_Temperature_val      : 100
@@ -59,32 +59,32 @@ ApplicationWindow {
         This updates the data in QML from its slot
 
     */
-    function updateDCL(dCL_Low_SOC, dCL_High_Cell_Resistance, dCL_Temperature, dCL_Low_Cell_Voltage, dCL_Low_Pack_Voltage, dCL_Voltage_Failsafe) {
-        dCL_Low_SOC_val                 = dCL_Low_SOC;
-        dCL_High_Cell_Resistance_val    = dCL_High_Cell_Resistance;
-        dCL_Temperature_val             = dCL_Temperature;
-        dCL_Low_Cell_Voltage_val        = dCL_Low_Cell_Voltage;
-        dCL_Low_Pack_Voltage_val        = dCL_Low_Pack_Voltage;
-        dCL_Voltage_Failsafe_val        = dCL_Voltage_Failsafe;
+    function updateDCL(string_out_0, string_out_1, string_out_2, string_out_3, string_out_4, string_out_5) {
+        string_out_0_val                = string_out_0;
+        string_out_1_val    			= string_out_1;
+        string_out_2_val             	= string_out_2;
+        string_out_3_val        		= string_out_3;
+        string_out_4_val        		= string_out_4;
+        string_out_5_val        		= string_out_5;
     }
 
-    function updateCCL(cCL_High_SOC, cCL_High_Cell_Resistance, cCL_Temperature, cCL_High_Cell_Voltage, cCL_High_Pack_Voltage, cCL_Charger_Latch) {
-        cCL_High_SOC_val                = cCL_High_SOC;
-        cCL_High_Cell_Resistance_val    = cCL_High_Cell_Resistance;
-        cCL_Temperature_val             = cCL_Temperature;
-        cCL_High_Cell_Voltage_val       = cCL_High_Cell_Voltage;
-        cCL_High_Pack_Voltage_val       = cCL_High_Pack_Voltage;
-        cCL_Charger_Latch_val           = cCL_Charger_Latch;
+    function updateCCL(string_out_6, string_out_7, string_out_8, string_out_9, string_out_10, string_out_11) {
+        string_out_6_val                = string_out_6;
+        string_out_7_val    			= string_out_7;
+        string_out_8_val             	= string_out_8;
+        string_out_9_val      			= string_out_9;
+        string_out_10_val      			= string_out_10;
+        string_out_11_val           	= string_out_11;
     }
 
-    function updateRelays(discharge_relay_disabled, charge_relay_disabled, charger_safety_disabled, diagnostic_trouble_code_active, always_on_power_status, is_ready_power_status, is_charging_power_status) {
-        discharge_relay_disabled_val        = discharge_relay_disabled;
-        charge_relay_disabled_val           = charge_relay_disabled;
-        charger_safety_disabled_val         = charger_safety_disabled;
-        diagnostic_trouble_code_active_val  = diagnostic_trouble_code_active;
-        always_on_power_status_val          = always_on_power_status;
-        is_ready_power_status_val           = is_ready_power_status;
-        is_charging_power_status_val        = is_charging_power_status;
+    function updateRelays(blinker0, blinker1, blinker2, warning, power_plug, loopy_infinity, okay) {
+        blinker0_val        	= blinker0;
+        blinker1_val            = blinker1;
+        blinker2_val         	= blinker2;
+        warning_val  			= warning;
+        power_plug_val          = power_plug;
+        loopy_infinity_val      = loopy_infinity;
+        okay_val        		= okay;
 
         clockText.set();
     }
@@ -112,16 +112,16 @@ ApplicationWindow {
         This takes the data from the Python code
     */
 
-    function onDCLUpdate(dCL_Low_SOC, dCL_High_Cell_Resistance, dCL_Temperature, dCL_Low_Cell_Voltage, dCL_Low_Pack_Voltage, dCL_Voltage_Failsafe) {
-        updateDCL(dCL_Low_SOC, dCL_High_Cell_Resistance, dCL_Temperature, dCL_Low_Cell_Voltage, dCL_Low_Pack_Voltage, dCL_Voltage_Failsafe)
+    function onDCLUpdate(string_out_0, string_out_1, string_out_2, string_out_3, string_out_4, string_out_5) {
+        updateDCL(string_out_0, string_out_1, string_out_2, string_out_3, string_out_4, string_out_5)
     }
 
-    function onCCLUpdate(cCL_High_SOC, cCL_High_Cell_Resistance, cCL_Temperature, cCL_High_Cell_Voltage, cCL_High_Pack_Voltage, cCL_Charger_Latch) {
-        updateCCL(cCL_High_SOC, cCL_High_Cell_Resistance, cCL_Temperature, cCL_High_Cell_Voltage, cCL_High_Pack_Voltage, cCL_Charger_Latch)
+    function onCCLUpdate(string_out_6, string_out_7, string_out_8, string_out_9, string_out_10, string_out_11) {
+        updateCCL(string_out_6, string_out_7, string_out_8, string_out_9, string_out_10, string_out_11)
     }
 
-    function onRelaysUpdate(discharge_relay_disabled, charge_relay_disabled, charger_safety_disabled, diagnostic_trouble_code_active, always_on_power_status, is_ready_power_status, is_charging_power_status) {
-        updateRelays(discharge_relay_disabled, charge_relay_disabled, charger_safety_disabled, diagnostic_trouble_code_active, always_on_power_status, is_ready_power_status, is_charging_power_status)
+    function onRelaysUpdate(blinker0, blinker1, blinker2, warning, power_plug, loopy_infinity, okay) {
+        updateRelays(blinker0, blinker1, blinker2, warning, power_plug, loopy_infinity, okay)
     }
 
     function onPackUpdate(pack_Amp_Hours, high_Temperature, low_Temperature, pack_Current, pack_Instant_Voltage, state_Of_Charge, relay_Status, watt_Hours) {
@@ -217,9 +217,9 @@ ApplicationWindow {
             x: 34
             y: 188
             color: "#ffffff"
-            text: dCL_Low_SOC_val.toFixed(2) + ' %'
+            text: string_out_0_val
             anchors.right: parent.right
-            anchors.rightMargin: -184
+            anchors.rightMargin: -171
             font.pixelSize: 35
             horizontalAlignment: Text.AlignRight
         }
@@ -229,9 +229,9 @@ ApplicationWindow {
             x: 34
             y: 236
             color: "#ffffff"
-            text: dCL_High_Cell_Resistance_val.toFixed(2) + ' Ω'
+            text: string_out_1_val
             anchors.right: parent.right
-            anchors.rightMargin: -175
+            anchors.rightMargin: -171
             font.pixelSize: 35
             horizontalAlignment: Text.AlignRight
         }
@@ -241,7 +241,7 @@ ApplicationWindow {
             x: 34
             y: 284
             color: "#ffffff"
-            text: dCL_Low_Cell_Voltage_val.toFixed(2) + ' V'
+            text: string_out_3_val
             anchors.right: parent.right
             anchors.rightMargin: -171
             font.pixelSize: 35
@@ -253,7 +253,7 @@ ApplicationWindow {
             x: 34
             y: 332
             color: "#ffffff"
-            text: dCL_Low_Pack_Voltage_val.toFixed(2) + ' V'
+            text: string_out_4_val
             anchors.right: parent.right
             anchors.rightMargin: -171
             font.pixelSize: 35
@@ -265,7 +265,7 @@ ApplicationWindow {
             x: 34
             y: 380
             color: "#ffffff"
-            text: dCL_Voltage_Failsafe_val.toFixed(2) + ' V'
+            text: string_out_5_val
             anchors.right: parent.right
             anchors.rightMargin: -171
             font.pixelSize: 35
@@ -277,7 +277,7 @@ ApplicationWindow {
             x: 34
             y: 428
             color: "#ffffff"
-            text: dCL_Temperature_val.toFixed(2) + ' C'
+            text: string_out_2_val
             anchors.right: parent.right
             anchors.rightMargin: -171
             font.pixelSize: 35
@@ -296,7 +296,7 @@ ApplicationWindow {
             x: 645
             y: 188
             color: "#ffffff"
-            text: cCL_High_SOC_val.toFixed(2) + ' %'
+            text: string_out_6_val
             anchors.right: parent.right
             anchors.rightMargin: -795
             font.pixelSize: 35
@@ -308,9 +308,9 @@ ApplicationWindow {
             x: 645
             y: 236
             color: "#ffffff"
-            text: cCL_High_Cell_Resistance_val.toFixed(2) + ' Ω'
+            text: string_out_7_val
             anchors.right: parent.right
-            anchors.rightMargin: -786
+            anchors.rightMargin: -795
             font.pixelSize: 35
             horizontalAlignment: Text.AlignRight
         }
@@ -321,9 +321,9 @@ ApplicationWindow {
             x: 647
             y: 284
             color: "#ffffff"
-            text: cCL_High_Cell_Voltage_val.toFixed(2) + ' V'
+            text: string_out_9_val
             anchors.right: parent.right
-            anchors.rightMargin: -784
+            anchors.rightMargin: -795
             font.pixelSize: 35
             horizontalAlignment: Text.AlignRight
         }
@@ -333,9 +333,9 @@ ApplicationWindow {
             x: 647
             y: 332
             color: "#ffffff"
-            text: cCL_High_Pack_Voltage_val.toFixed(2) + ' V'
+            text: string_out_10_val
             anchors.right: parent.right
-            anchors.rightMargin: -784
+            anchors.rightMargin: -795
             font.pixelSize: 35
             horizontalAlignment: Text.AlignRight
         }
@@ -345,9 +345,9 @@ ApplicationWindow {
             x: 647
             y: 380
             color: "#ffffff"
-            text: cCL_Charger_Latch_val.toFixed(2)
+            text: string_out_11_val
             anchors.right: parent.right
-            anchors.rightMargin: -752
+            anchors.rightMargin: -795
             font.pixelSize: 35
             horizontalAlignment: Text.AlignRight
         }
@@ -356,9 +356,9 @@ ApplicationWindow {
             x: 647
             y: 428
             color: "#ffffff"
-            text: cCL_Temperature_val.toFixed(2) + ' C'
+            text: string_out_8_val
             anchors.right: parent.right
-            anchors.rightMargin: -784
+            anchors.rightMargin: -795
             font.pixelSize: 35
             horizontalAlignment: Text.AlignRight
         }
@@ -379,7 +379,7 @@ ApplicationWindow {
             fillMode: Image.PreserveAspectFit
             source: "Gauge/error.png"
 
-            visible: diagnostic_trouble_code_active_val
+            visible: warning_val
         }
 
         StatusIndicator {
@@ -387,7 +387,7 @@ ApplicationWindow {
             x: 14
             y: 87
 
-            active: discharge_relay_disabled_val
+            active: blinker0_val
         }
 
         StatusIndicator {
@@ -395,7 +395,7 @@ ApplicationWindow {
             x: 44
             y: 87
 
-            active: charge_relay_disabled_val
+            active: blinker1_val
         }
 
         StatusIndicator {
@@ -403,7 +403,7 @@ ApplicationWindow {
             x: 74
             y: 87
 
-            active: charger_safety_disabled_val
+            active: blinker2_val
         }
 
         Image {
@@ -415,7 +415,7 @@ ApplicationWindow {
             fillMode: Image.PreserveAspectFit
             source: "Gauge/always.png"
 
-            visible: always_on_power_status_val
+            visible: power_plug_val
         }
 
         Image {
@@ -427,7 +427,7 @@ ApplicationWindow {
             fillMode: Image.PreserveAspectFit
             source: "Gauge/ready.png"
 
-            visible: is_ready_power_status_val
+            visible: loopy_infinity_val
         }
 
         Image {
@@ -439,7 +439,7 @@ ApplicationWindow {
             fillMode: Image.PreserveAspectFit
             source: "Gauge/solar.png"
 
-            visible: is_charging_power_status_val
+            visible: okay_val
         }
     } //end Status
 
@@ -623,4 +623,3 @@ ApplicationWindow {
 
 
 }//end ApplicationWindow
-

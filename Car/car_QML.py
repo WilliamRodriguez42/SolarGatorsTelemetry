@@ -83,49 +83,28 @@ def update_variables():
 def update():
 	global DCL_Low_SOC, DCL_High_Cell_Resistance, DCL_Temperature, DCL_Low_Cell_Voltage, DCL_Low_Pack_Voltage, DCL_Voltage_Failsafe, CCL_High_SOC, CCL_High_Cell_Resistance, CCL_Temperature, CCL_High_Cell_Voltage, CCL_High_Pack_Voltage, CCL_Charger_Latch, discharge_relay_disabled, charge_relay_disabled, charger_safety_disabled, diagnostic_trouble_code_active, always_on_power_status, is_ready_power_status, is_charging_power_status, Pack_Amp_Hours, High_Temperature, Low_Temperature, Pack_Current, Pack_Instant_Voltage, State_Of_Charge, Relay_Status, Watt_Hours
 
-	DCL_Low_SOC                 = random.uniform(0, 100)
-	DCL_High_Cell_Resistance    = random.uniform(0, 1000)
-	DCL_Temperature             = random.uniform(0, 500)
-	DCL_Low_Cell_Voltage        = random.uniform(0, 120)
-	DCL_Low_Pack_Voltage        = random.uniform(0, 120)
-	DCL_Voltage_Failsafe        = random.uniform(0, 120)
+	DCL_Low_SOC                 = 1
+	DCL_High_Cell_Resistance    = 1
+	DCL_Temperature             = 1
+	DCL_Low_Cell_Voltage        = 1
+	DCL_Low_Pack_Voltage        = 1
+	DCL_Voltage_Failsafe        = 1
 
-	CCL_High_SOC                = random.uniform(0, 100)
-	CCL_High_Cell_Resistance    = random.uniform(0, 1000)
-	CCL_Temperature             = random.uniform(0, 500)
-	CCL_High_Cell_Voltage       = random.uniform(0, 240)
-	CCL_High_Pack_Voltage       = random.uniform(0, 240)
-	CCL_Charger_Latch           = random.uniform(0, 100)
+	CCL_High_SOC                = 1
+	CCL_High_Cell_Resistance    = 1
+	CCL_Temperature             = 1
+	CCL_High_Cell_Voltage       = 1
+	CCL_High_Pack_Voltage       = 1
+	CCL_Charger_Latch           = 1
 
 	#Flippity floppity
-	if(discharge_relay_disabled):
-		discharge_relay_disabled = 0
-	else:
-		discharge_relay_disabled = 1
-	if(charge_relay_disabled):
-		charge_relay_disabled = 0
-	else:
-		charge_relay_disabled = 1
-	if(charger_safety_disabled):
-		charger_safety_disabled = 0
-	else:
-		charger_safety_disabled = 1
-	if(diagnostic_trouble_code_active):
-		diagnostic_trouble_code_active = 0
-	else:
-		diagnostic_trouble_code_active = 1
-	if(always_on_power_status):
-		always_on_power_status = 0
-	else:
-		always_on_power_status = 1
-	if(is_ready_power_status ):
-		is_ready_power_status  = 0
-	else:
-		is_ready_power_status = 1
-	if(is_charging_power_status):
-		is_charging_power_status = 0
-	else:
-		is_charging_power_status = 1
+	discharge_relay_disabled = 1 - discharge_relay_disabled
+	charge_relay_disabled = 1 - charge_relay_disabled
+	charger_safety_disabled = 1 - charger_safety_disabled
+	diagnostic_trouble_code_active = 1 - diagnostic_trouble_code_active
+	always_on_power_status = 1 - always_on_power_status
+	is_ready_power_status = 1 - is_ready_power_status
+	is_charging_power_status = 1 - is_charging_power_status
 
 	Pack_Amp_Hours          = random.uniform(0, 100)
 	High_Temperature        = random.uniform(0, 500)

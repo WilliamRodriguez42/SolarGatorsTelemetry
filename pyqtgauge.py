@@ -13,6 +13,7 @@ from PyQt5.QtWidgets import QApplication
 
 from Car import car_QML
 from Car import speed
+from Car import Logging
 from Strategy import pro_strats
 
 
@@ -23,9 +24,9 @@ from Strategy import pro_strats
 # We need to import the appropriate module containing the desired variables
 # Then we use that module.variable to emit a signal
 # e.g. car_QML.variable_name
-class UpdaterClass(QObject):        
-	DCL     = pyqtSignal(float, float, float, float, float, float)
-	CCL     = pyqtSignal(float, float, float, float, float, float)
+class UpdaterClass(QObject):
+	DCL     = pyqtSignal(str, str, str, str, str, str)
+	CCL     = pyqtSignal(str, str, str, str, str, str)
 	relays  = pyqtSignal(int, int, int, int, int, int, int)
 	pack    = pyqtSignal(float, float, float, float, float, float, float, float)
 	speed   = pyqtSignal(float, float, float)
@@ -34,10 +35,12 @@ class UpdaterClass(QObject):
 		super(UpdaterClass, self).__init__(parent)
 
 	def dcl_update(self):
-		self.DCL.emit(car_QML.DCL_Low_SOC, car_QML.DCL_High_Cell_Resistance, car_QML.DCL_Temperature, car_QML.DCL_Low_Cell_Voltage, car_QML.DCL_Low_Pack_Voltage, car_QML.DCL_Voltage_Failsafe)
+		self.DCL.emit(str(round(Logging.voltage, 2))+" V",
+						str(round(Logging.current, 2))+" A",
+						 str(round(speed.getSpeed(),2))+" MPH", "HI", "HI", "HI")
 
 	def ccl_update(self):
-		self.CCL.emit(car_QML.CCL_High_SOC, car_QML.CCL_High_Cell_Resistance, car_QML.CCL_Temperature, car_QML.CCL_High_Cell_Voltage, car_QML.CCL_High_Pack_Voltage, car_QML.CCL_Charger_Latch)
+		self.CCL.emit("HI", "HI", "HI", "HI", "HI", "HI")
 
 	def relays_update(self):
 		self.relays.emit(car_QML.discharge_relay_disabled, car_QML.charge_relay_disabled, car_QML.charger_safety_disabled, car_QML.diagnostic_trouble_code_active, car_QML.always_on_power_status, car_QML.is_ready_power_status, car_QML.is_charging_power_status)
@@ -46,8 +49,8 @@ class UpdaterClass(QObject):
 		self.pack.emit(car_QML.Pack_Amp_Hours, car_QML.High_Temperature, car_QML.Low_Temperature, car_QML.Pack_Current, car_QML.Pack_Instant_Voltage, car_QML.State_Of_Charge, car_QML.Relay_Status, car_QML.Watt_Hours)
 
 	def speed_update(self):
-		self.speed.emit(speed.speed, pro_strats.optimumSpeedLow, pro_strats.optimumSpeedHigh)
-		
+		self.speed.emit(speed.getSpeed(), pro_strats.optimumSpeedLow, pro_strats.optimumSpeedHigh)
+
 ##### END Updater Class #####
 
 
@@ -65,6 +68,7 @@ class DataLoop(QThread):
 
 	def run(self):
 		while True:
+			Logging.logData(speed.getSpeed())
 			car_QML.update()        #Call updater function in car_QML
 			pro_strats.update()     #Call updater function in pro_strats
 			self.msleep(100)
@@ -122,6 +126,9 @@ if __name__ == "__main__":
 	updateTimer4.timeout.connect(updater.pack_update)
 	updateTimer5.timeout.connect(updater.speed_update)
 
+	# Begin logging
+	Logging.startLogging()
+
 	# Run data collection thread
 	speed.startThread()
 	dataLoop = DataLoop()
@@ -133,10 +140,8 @@ if __name__ == "__main__":
 
 	# Clean up?
 	speed.stopThread()
+	Logging.stopLogging()
 
         # Exit the program
 	sys.exit()
 ##### END MAIN #####
-
-
-
