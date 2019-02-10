@@ -14,8 +14,8 @@ from PyQt5.QtWidgets import QApplication
 from Car import car_QML
 from Car import speed
 from Car import Logging
+from Car import internet
 from Strategy import pro_strats
-
 
 ##### Updater Class #####
 # This is how the Qt Quick elements get their data
@@ -24,20 +24,33 @@ from Strategy import pro_strats
 # We need to import the appropriate module containing the desired variables
 # Then we use that module.variable to emit a signal
 # e.g. car_QML.variable_name
+update_counter = 0
+ip_addr = ""
+wifi_name = ""
 class UpdaterClass(QObject):
-	DCL     = pyqtSignal(str, str, str, str, str, str)
-	CCL     = pyqtSignal(str, str, str, str, str, str)
+	DCL	 = pyqtSignal(str, str, str, str, str, str)
+	CCL	 = pyqtSignal(str, str, str, str, str, str)
 	relays  = pyqtSignal(int, int, int, int, int, int, int)
-	pack    = pyqtSignal(float, float, float, float, float, float, float, float)
+	pack	= pyqtSignal(float, float, float, float, float, float, float, float)
 	speed   = pyqtSignal(float, float, float)
 
 	def __init__(self, parent=None):
 		super(UpdaterClass, self).__init__(parent)
 
 	def dcl_update(self):
-		self.DCL.emit(str(round(Logging.voltage, 2))+" V",
-						str(round(Logging.current, 2))+" A",
-						 str(round(speed.getSpeed(),2))+" MPH", "HI", "HI", "HI")
+			global update_counter, ip_addr, wifi_name
+			if update_counter % 150 == 0:
+				ip_addr, wifi_name = internet.get_ip_and_name()
+				print("HI")
+
+			self.DCL.emit(  str(round(Logging.voltage, 2))+" V",
+							str(round(Logging.current, 2))+" A",
+							str(round(speed.getSpeed(),2))+" MPH",
+							ip_addr,
+							wifi_name,
+							"HI")
+
+			update_counter += 1
 
 	def ccl_update(self):
 		self.CCL.emit("HI", "HI", "HI", "HI", "HI", "HI")
@@ -69,8 +82,8 @@ class DataLoop(QThread):
 	def run(self):
 		while True:
 			Logging.logData(speed.getSpeed())
-			car_QML.update()        #Call updater function in car_QML
-			pro_strats.update()     #Call updater function in pro_strats
+			car_QML.update()		#Call updater function in car_QML
+			pro_strats.update()	 #Call updater function in pro_strats
 			self.msleep(100)
 
 ##### END Data Collection Threads #####
@@ -142,6 +155,6 @@ if __name__ == "__main__":
 	speed.stopThread()
 	Logging.stopLogging()
 
-        # Exit the program
+		# Exit the program
 	sys.exit()
 ##### END MAIN #####

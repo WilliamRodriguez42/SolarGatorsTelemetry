@@ -220,7 +220,7 @@ ApplicationWindow {
             text: string_out_0_val
             anchors.right: parent.right
             anchors.rightMargin: -171
-            font.pixelSize: 35
+            font.pixelSize: 15
             horizontalAlignment: Text.AlignRight
         }
 
@@ -232,7 +232,7 @@ ApplicationWindow {
             text: string_out_1_val
             anchors.right: parent.right
             anchors.rightMargin: -171
-            font.pixelSize: 35
+            font.pixelSize: 15
             horizontalAlignment: Text.AlignRight
         }
 
@@ -244,7 +244,7 @@ ApplicationWindow {
             text: string_out_3_val
             anchors.right: parent.right
             anchors.rightMargin: -171
-            font.pixelSize: 35
+            font.pixelSize: 15
             horizontalAlignment: Text.AlignRight
         }
 
@@ -256,7 +256,7 @@ ApplicationWindow {
             text: string_out_4_val
             anchors.right: parent.right
             anchors.rightMargin: -171
-            font.pixelSize: 35
+            font.pixelSize: 15
             horizontalAlignment: Text.AlignRight
         }
 
@@ -268,7 +268,7 @@ ApplicationWindow {
             text: string_out_5_val
             anchors.right: parent.right
             anchors.rightMargin: -171
-            font.pixelSize: 35
+            font.pixelSize: 15
             horizontalAlignment: Text.AlignRight
         }
 
@@ -280,7 +280,7 @@ ApplicationWindow {
             text: string_out_2_val
             anchors.right: parent.right
             anchors.rightMargin: -171
-            font.pixelSize: 35
+            font.pixelSize: 15
             horizontalAlignment: Text.AlignRight
         }
     } //end DCL
@@ -299,7 +299,7 @@ ApplicationWindow {
             text: string_out_6_val
             anchors.right: parent.right
             anchors.rightMargin: -795
-            font.pixelSize: 35
+            font.pixelSize: 15
             horizontalAlignment: Text.AlignRight
         }
 
@@ -311,7 +311,7 @@ ApplicationWindow {
             text: string_out_7_val
             anchors.right: parent.right
             anchors.rightMargin: -795
-            font.pixelSize: 35
+            font.pixelSize: 15
             horizontalAlignment: Text.AlignRight
         }
 
@@ -324,7 +324,7 @@ ApplicationWindow {
             text: string_out_9_val
             anchors.right: parent.right
             anchors.rightMargin: -795
-            font.pixelSize: 35
+            font.pixelSize: 15
             horizontalAlignment: Text.AlignRight
         }
 
@@ -336,7 +336,7 @@ ApplicationWindow {
             text: string_out_10_val
             anchors.right: parent.right
             anchors.rightMargin: -795
-            font.pixelSize: 35
+            font.pixelSize: 15
             horizontalAlignment: Text.AlignRight
         }
 
@@ -348,7 +348,7 @@ ApplicationWindow {
             text: string_out_11_val
             anchors.right: parent.right
             anchors.rightMargin: -795
-            font.pixelSize: 35
+            font.pixelSize: 15
             horizontalAlignment: Text.AlignRight
         }
         Text {
@@ -359,7 +359,7 @@ ApplicationWindow {
             text: string_out_8_val
             anchors.right: parent.right
             anchors.rightMargin: -795
-            font.pixelSize: 35
+            font.pixelSize: 15
             horizontalAlignment: Text.AlignRight
         }
     } //end CCL
