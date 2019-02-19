@@ -3,12 +3,14 @@
 #include "qcustomplot.h"
 #include <QDebug>
 #include <QTimer>
-//#include "tmmessage.h"
+#include <QTextEdit>
+#include "tmmessage.h"
 #include <string>
 #include <fstream>
 #include <sstream>
 #include <cstdio>
 #include <iostream>
+#include <settings.h>
 
 MainWindow::MainWindow(QWidget *parent) :
   QMainWindow(parent),
@@ -17,11 +19,25 @@ MainWindow::MainWindow(QWidget *parent) :
 
 {
 	ui->setupUi(this);
+	this->settings_window = new Settings(this);
 	
-	//Graphs menu
-	this->connect(this->ui->viewGraph1_checkbox, SIGNAL(toggled(bool)), this, SLOT(toggleViewFrame1(bool)));	
-	this->connect(this->ui->viewGraph2_checkbox, SIGNAL(toggled(bool)), this, SLOT(toggleViewFrame2(bool)));
-	this->connect(this->ui->viewGraph3_checkbox, SIGNAL(toggled(bool)), this, SLOT(toggleViewFrame3(bool)));
+	//Tools menu
+		//Graphs sub-menu
+		this->connect(this->ui->viewGraph1_checkbox, SIGNAL(toggled(bool)), this, SLOT(toggleViewFrame1(bool)));	
+		this->connect(this->ui->viewGraph2_checkbox, SIGNAL(toggled(bool)), this, SLOT(toggleViewFrame2(bool)));
+		this->connect(this->ui->viewGraph3_checkbox, SIGNAL(toggled(bool)), this, SLOT(toggleViewFrame3(bool)));
+		this->connect(this->ui->viewGraph4_checkbox, SIGNAL(toggled(bool)), this, SLOT(toggleViewFrame4(bool)));
+		this->connect(this->ui->viewGraph5_checkbox, SIGNAL(toggled(bool)), this, SLOT(toggleViewFrame5(bool)));
+		this->connect(this->ui->viewGraph6_checkbox, SIGNAL(toggled(bool)), this, SLOT(toggleViewFrame6(bool)));
+		this->connect(this->ui->viewGraph7_checkbox, SIGNAL(toggled(bool)), this, SLOT(toggleViewFrame7(bool)));
+		this->connect(this->ui->viewGraph8_checkbox, SIGNAL(toggled(bool)), this, SLOT(toggleViewFrame8(bool)));
+		
+		//Messages sub-menu
+		this->connect(this->ui->viewWarningMessages_checkbox, SIGNAL(toggled(bool)), this, SLOT(toggleViewWarningMessages(bool)));
+		this->connect(this->ui->viewDataMessages_checkbox, SIGNAL(toggled(bool)), this, SLOT(toggleViewDataMessages(bool)));
+		
+		this->connect(this->ui->actionSettings, SIGNAL(triggered(bool)), this, SLOT(openSettings(bool)));
+	
 	
 	//Help menu
 	this->connect(this->ui->actionHelp_me, SIGNAL(triggered(bool)), this, SLOT(lol(bool)));
@@ -106,8 +122,8 @@ MainWindow::MainWindow(QWidget *parent) :
   QCPTextElement *graph2Title = new QCPTextElement(ui->Graph2, "Charge", QFont("sans", 17, QFont::Bold));
   ui->Graph2->plotLayout()->addElement(0, 0, graph2Title);
   
-  ui->Graph2->xAxis->setLabel("x Axis label (e.g. time)");
-  ui->Graph2->yAxis->setLabel("y Axis label (e.g. velocity)");
+  ui->Graph2->xAxis->setLabel("Time");
+  ui->Graph2->yAxis->setLabel("Charge");
   ui->Graph2->legend->setVisible(true);
   //QFont legendFont = font();
   legendFont.setPointSize(10);
@@ -463,6 +479,12 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
   delete ui;
+}
+
+void MainWindow::openSettings(bool unused) {	//open settings window
+	qDebug("openSettings");
+	this->settings_window->show();
+	qDebug("I supposedly just opened the settings window");
 }
 
 void MainWindow::startPlotting(int f) { //repeatedly calls setData() at frequency f
@@ -858,6 +880,90 @@ void MainWindow::toggleViewFrame3(bool state){ //toggles whether or not to show 
 	}  */
 } 
 
+void MainWindow::toggleViewFrame4(bool state){ //toggles whether or not to show Frame/graph 4
+	//qDebug() << "It got called and state is" << state;
+	if (state == true) {
+		viewFrame4 = true;
+		this->ui->Frame4->show();
+	}
+	else {
+		viewFrame4 = false;
+		this->ui->Frame4->hide();
+	}
+} 
+
+void MainWindow::toggleViewFrame5(bool state){ //toggles whether or not to show Frame/graph 5
+	//qDebug() << "It got called and state is" << state;
+	if (state == true) {
+		viewFrame5 = true;
+		this->ui->Frame5->show();
+	}
+	else {
+		viewFrame5 = false;
+		this->ui->Frame5->hide();
+	}
+} 
+
+void MainWindow::toggleViewFrame6(bool state){ //toggles whether or not to show Frame/graph 6
+	//qDebug() << "It got called and state is" << state;
+	if (state == true) {
+		viewFrame6 = true;
+		this->ui->Frame6->show();
+	}
+	else {
+		viewFrame6 = false;
+		this->ui->Frame6->hide();
+	}
+} 
+
+void MainWindow::toggleViewFrame7(bool state){ //toggles whether or not to show Frame/graph 7
+	//qDebug() << "It got called and state is" << state;
+	if (state == true) {
+		viewFrame7 = true;
+		this->ui->Frame7->show();
+	}
+	else {
+		viewFrame7 = false;
+		this->ui->Frame7->hide();
+	}
+} 
+
+void MainWindow::toggleViewFrame8(bool state){ //toggles whether or not to show Frame/graph 8
+	//qDebug() << "It got called and state is" << state;
+	if (state == true) {
+		viewFrame8 = true;
+		this->ui->Frame8->show();
+	}
+	else {
+		viewFrame8 = false;
+		this->ui->Frame8->hide();
+	}
+} 
+
+void MainWindow::toggleViewWarningMessages(bool state){ //toggles whether or not to show WarningMessageFrame
+	//qDebug() << "It got called and state is" << state;
+	if (state == true) {
+		viewWarningMessages = true;
+		this->ui->WarningMessageFrame->show();
+	}
+	else {
+		viewWarningMessages = false;
+		this->ui->WarningMessageFrame->hide();
+	}
+} 
+
+void MainWindow::toggleViewDataMessages(bool state){ //toggles whether or not to show DataMessageFrame
+	//qDebug() << "It got called and state is" << state;
+	if (state == true) {
+		viewDataMessages = true;
+		this->ui->DataMessageFrame->show();
+	}
+	else {
+		viewDataMessages = false;
+		this->ui->DataMessageFrame->hide();
+	}
+} 
+
 bool MainWindow::getUSBData(){ //this will read from the "file", i.e. the stuff coming across the USB
 	//should this function be called at a fixed interval to check for new data (and just record previous value otherwise), 
 	//or should it only recieve data as it comes across?
@@ -892,6 +998,10 @@ bool MainWindow::getUSBData(){ //this will read from the "file", i.e. the stuff 
         double Speed;
         srem >> Speed;              // assuming the units are MPH
         qDebug() << " Speed is " << Speed;
+		QString speedMessage = "Speed is " + QString::number(Speed) + "\n";
+		qDebug() << "Here's the speedMessage: " << speedMessage;
+		this->ui->DataMessages->append(speedMessage);
+		
         //QVector<double> speedCoordinate(2);
         //speedCoordinate.append(speedCoordinates.length() - 1);
         //speedCoordinate.append(Speed);
@@ -1265,7 +1375,7 @@ void MainWindow::getData() { //gets data and adds points to the coordinate vecto
 	qDebug("I got to getData");
     getUSBData();
 	index++;
-	qDebug() << "length of numberVectors is" << numberVectors.length();
+	//qDebug() << "length of numberVectors is" << numberVectors.length();
 	for (int i = 0; i < numberVectors.length(); i++) {
 		qDebug() << "i =" << i;
 		if (numberVectors[i] == 0) { //if there have been no values transmitted yet
@@ -1289,6 +1399,7 @@ void MainWindow::getData() { //gets data and adds points to the coordinate vecto
 	}
 	qDebug("A");
 	if(chargeCoordinates.length() == 2) {	
+		//setData(x values, y values)
 		this->ui->Graph2->graph(0)->setData(chargeCoordinates.at(0), chargeCoordinates.at(1));
 	}
 	if(powerCoordinates.length() == 2) {
@@ -1322,6 +1433,8 @@ void MainWindow::getData() { //gets data and adds points to the coordinate vecto
 	
 	if (!(speedCoordinates.at(0).empty())) {
 		qDebug("speedCoordinates is not empty");
+		//QString speedMessage = "sQString::number(speedCoordinates[0][0]);
+		//this->ui->DataMessages->append(speedMessage);
 		plotData();
 	}
 	qDebug("B");
@@ -1453,27 +1566,51 @@ void MainWindow::plotData() {
 	//check to make sure the coordinate things aren't empty
 	if (!(speedCoordinates.at(0).empty()) && !(speedCoordinates.at(1).empty())) { //graph 1 = speed
 		this->ui->Graph1->replot();
+		int iteration = speedCoordinates.at(0).length() -1; //number of speed coordinates so far
+		QString speedMessage = "Graphing speed point " + QString::number(iteration) + ": " + QString::number(speedCoordinates.at(1).at(iteration)) + "\n";
+		this->ui->DataMessages->append(speedMessage); //this should add a message to the Quantitative Data pane
 	}
 	if (!(chargeCoordinates.at(0).empty()) && !(chargeCoordinates.at(1).empty())) { //graph 2 = charge
 		this->ui->Graph2->replot();
+		int iteration = chargeCoordinates.at(0).length() -1; //number of charge coordinates so far		
+		QString chargeMessage = "Graphing charge point " + QString::number(iteration) + ": " + QString::number(chargeCoordinates.at(1).at(iteration)) + "\n";
+		this->ui->DataMessages->append(chargeMessage); //this should add a message to the Quantitative Data pane
 	}
 	if (!(powerCoordinates.at(0).empty()) && !(powerCoordinates.at(1).empty())) { //graph 3 = power
 		this->ui->Graph3->replot();
+		int iteration = powerCoordinates.at(0).length() -1; //number of power coordinates so far
+		QString powerMessage = "Graphing power point " + QString::number(iteration) + ": " + QString::number(powerCoordinates.at(1).at(iteration)) + "\n";
+		this->ui->DataMessages->append(powerMessage); //this should add a message to the Quantitative Data pane
 	}
 	if (!(energyCoordinates.at(0).empty()) && !(energyCoordinates.at(1).empty())) { //graph 4 = energy
 		this->ui->Graph4->replot();
+		int iteration = energyCoordinates.at(0).length() -1; //number of energy coordinates so far
+		QString energyMessage = "Graphing energy point " + QString::number(iteration) + ": " + QString::number(energyCoordinates.at(1).at(iteration)) + "\n";
+		this->ui->DataMessages->append(energyMessage); //this should add a message to the Quantitative Data pane
 	}
 	if (!(currentCoordinates.at(0).empty()) && !(currentCoordinates.at(1).empty())) { //graph 5 = current
 		this->ui->Graph5->replot();
+		int iteration = currentCoordinates.at(0).length() -1; //number of current coordinates so far
+		QString currentMessage = "Graphing current point " + QString::number(iteration) + ": " + QString::number(currentCoordinates.at(1).at(iteration)) + "\n";
+		this->ui->DataMessages->append(currentMessage); //this should add a message to the Quantitative Data pane
 	}
 	if (!(voltageCoordinates.at(0).empty()) && !(voltageCoordinates.at(1).empty())) { //graph 6 = voltage
 		this->ui->Graph6->replot();
+		int iteration = voltageCoordinates.at(0).length() -1; //number of voltage coordinates so far
+		QString voltageMessage = "Graphing voltage point " + QString::number(iteration) + ": " + QString::number(voltageCoordinates.at(1).at(iteration)) + "\n";
+		this->ui->DataMessages->append(voltageMessage); //this should add a message to the Quantitative Data pane
 	}
 	if (!(ampHourCoordinates.at(0).empty()) && !(ampHourCoordinates.at(1).empty())) { //graph 7 = amp hours
 		this->ui->Graph7->replot();
+		int iteration = ampHourCoordinates.at(0).length() -1; //number of amp Hour coordinates so far
+		QString ampHourMessage = "Graphing amp Hour point " + QString::number(iteration) + ": " + QString::number(ampHourCoordinates.at(1).at(iteration)) + "\n";
+		this->ui->DataMessages->append(ampHourMessage); //this should add a message to the Quantitative Data pane
 	}
 	if (!(temperatureCoordinates.at(0).empty()) && !(temperatureCoordinates.at(1).empty())) { //graph 8 = temperature
 		this->ui->Graph8->replot();
+		int iteration = temperatureCoordinates.at(0).length() -1; //number of temperature coordinates so far
+		QString temperatureMessage = "Graphing temperature point " + QString::number(iteration) + ": " + QString::number(temperatureCoordinates.at(1).at(iteration)) + "\n";
+		this->ui->DataMessages->append(temperatureMessage); //this should add a message to the Quantitative Data pane
 	}
 	qDebug() << "B";
 }
@@ -1670,9 +1807,10 @@ void MainWindow::updateMessages(int message, int value) {
 }
 
 void MainWindow::lol(bool unused) {
-	QMessageBox::warning(
+	QMessageBox::information(
 				this, 
-				"Ruh-Roh!", 
-				"Sorry kiddo, you know as much as I do.",
+				"How to Do It", 
+				"<p>Until I have time to create a real help menu, here's a summary.</p><p>The Tools menu lets you select which items you'd like to view. The graphs will graph data that is received via USB, the Warning Messages pane will show any warning messages "
+				"over, and the Quantitative Data pane (\"Peek under the hood\") gives a real-time feed of what the program thinks it's doing. </p>",
 				QMessageBox::Ok);	
 }

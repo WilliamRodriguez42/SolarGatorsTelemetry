@@ -63,38 +63,101 @@
         </widget>
        </item>
        <item>
-        <widget class="QTextBrowser" name="messagesPane">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
+        <widget class="QFrame" name="WarningMessageFrame">
+         <property name="frameShape">
+          <enum>QFrame::NoFrame</enum>
          </property>
-         <property name="minimumSize">
-          <size>
-           <width>400</width>
-           <height>300</height>
-          </size>
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
          </property>
-         <property name="maximumSize">
-          <size>
-           <width>500</width>
-           <height>500</height>
-          </size>
-         </property>
-         <property name="font">
-          <font>
-           <family>Segoe UI</family>
-           <pointsize>11</pointsize>
-          </font>
-         </property>
-         <property name="html">
-          <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+         <layout class="QVBoxLayout" name="verticalLayout_11">
+          <item>
+           <widget class="QLabel" name="label">
+            <property name="font">
+             <font>
+              <family>Segoe UI</family>
+              <pointsize>11</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>Warning messages:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QTextBrowser" name="messagesPane">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>400</width>
+              <height>200</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>1000</width>
+              <height>1000</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <family>Segoe UI</family>
+              <pointsize>11</pointsize>
+             </font>
+            </property>
+            <property name="frameShape">
+             <enum>QFrame::StyledPanel</enum>
+            </property>
+            <property name="html">
+             <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Segoe UI'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;(No messages to report)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QFrame" name="DataMessageFrame">
+         <property name="frameShape">
+          <enum>QFrame::NoFrame</enum>
          </property>
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_10">
+          <item>
+           <widget class="QLabel" name="label_2">
+            <property name="font">
+             <font>
+              <family>Segoe UI</family>
+              <pointsize>11</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>Quantitative data measurements:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QTextBrowser" name="DataMessages">
+            <property name="minimumSize">
+             <size>
+              <width>400</width>
+              <height>200</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </widget>
        </item>
       </layout>
@@ -109,7 +172,7 @@ p, li { white-space: pre-wrap; }
        <property name="geometry">
         <rect>
          <x>0</x>
-         <y>-456</y>
+         <y>0</y>
          <width>631</width>
          <height>1361</height>
         </rect>
@@ -308,23 +371,41 @@ p, li { white-space: pre-wrap; }
      <height>25</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menuGraphs">
-    <property name="title">
-     <string>Graphs</string>
-    </property>
-    <addaction name="viewGraph1_checkbox"/>
-    <addaction name="viewGraph2_checkbox"/>
-    <addaction name="viewGraph3_checkbox"/>
-    <addaction name="actionGraph4"/>
-    <addaction name="actionGraph5"/>
-   </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
      <string>Help</string>
     </property>
     <addaction name="actionHelp_me"/>
    </widget>
-   <addaction name="menuGraphs"/>
+   <widget class="QMenu" name="menuView">
+    <property name="title">
+     <string>Tools</string>
+    </property>
+    <widget class="QMenu" name="menuGraphs_2">
+     <property name="title">
+      <string>Graphs</string>
+     </property>
+     <addaction name="viewGraph1_checkbox"/>
+     <addaction name="viewGraph2_checkbox"/>
+     <addaction name="viewGraph3_checkbox"/>
+     <addaction name="viewGraph4_checkbox"/>
+     <addaction name="viewGraph5_checkbox"/>
+     <addaction name="viewGraph6_checkbox"/>
+     <addaction name="viewGraph7_checkbox"/>
+     <addaction name="viewGraph8_checkbox"/>
+    </widget>
+    <widget class="QMenu" name="menuMessages">
+     <property name="title">
+      <string>Messages</string>
+     </property>
+     <addaction name="viewWarningMessages_checkbox"/>
+     <addaction name="viewDataMessages_checkbox"/>
+    </widget>
+    <addaction name="menuGraphs_2"/>
+    <addaction name="menuMessages"/>
+    <addaction name="actionSettings"/>
+   </widget>
+   <addaction name="menuView"/>
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
@@ -350,7 +431,7 @@ p, li { white-space: pre-wrap; }
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Graph2</string>
+    <string>Charge</string>
    </property>
   </action>
   <action name="viewGraph3_checkbox">
@@ -369,7 +450,7 @@ p, li { white-space: pre-wrap; }
     <string>Help me!</string>
    </property>
   </action>
-  <action name="actionGraph4">
+  <action name="viewGraph4_checkbox">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -377,10 +458,10 @@ p, li { white-space: pre-wrap; }
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Graph4</string>
+    <string>Energy</string>
    </property>
   </action>
-  <action name="actionGraph5">
+  <action name="viewGraph5_checkbox">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -388,7 +469,86 @@ p, li { white-space: pre-wrap; }
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Graph5</string>
+    <string>Current</string>
+   </property>
+  </action>
+  <action name="viewGraph6_checkbox">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Voltage</string>
+   </property>
+  </action>
+  <action name="viewGraph7_checkbox">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Amp Hours</string>
+   </property>
+  </action>
+  <action name="viewGraph8_checkbox">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Temperature</string>
+   </property>
+  </action>
+  <action name="viewWarningMessages_checkbox">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Warning Messages</string>
+   </property>
+  </action>
+  <action name="viewDataMessages_checkbox">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Peek under the hood</string>
+   </property>
+   <property name="whatsThis">
+    <string>Provides insight on how the program is interpreting the data it receives</string>
+   </property>
+   <property name="font">
+    <font>
+     <family>Segoe UI</family>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+  </action>
+  <action name="actionSpeed">
+   <property name="text">
+    <string>Speed</string>
+   </property>
+  </action>
+  <action name="actionSomething">
+   <property name="text">
+    <string>Something</string>
+   </property>
+  </action>
+  <action name="actionSettings">
+   <property name="text">
+    <string>Settings</string>
    </property>
   </action>
  </widget>

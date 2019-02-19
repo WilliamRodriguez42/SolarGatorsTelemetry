@@ -10,6 +10,7 @@
 #include <sstream>
 #include <cstdio>
 #include <iostream>
+#include "settings.h"
 
 namespace Ui {
 class MainWindow;
@@ -27,7 +28,16 @@ public:
 	bool viewFrame1;
 	bool viewFrame2;
 	bool viewFrame3;
+	bool viewFrame4;
+	bool viewFrame5;
+	bool viewFrame6;
+	bool viewFrame7;
+	bool viewFrame8;
+	bool viewWarningMessages;
+	bool viewDataMessages;
 	
+	//the qlist has two entries: one for the x coordinates and one for the y coordinates
+	//so to access the y coordinate of the 12th entry of speedCoordinates you'd do speedCoordinates[1][11]
 	QList<QVector<double>> speedCoordinates; //contains (references to) the full history of speed coordinates
 	QList<QVector<double>> chargeCoordinates; //contains (references to) the full history of charge level coordinates
 	QList<QVector<double>> powerCoordinates; //contains (references to) the full history of power coordinates
@@ -83,9 +93,19 @@ public:
 	int index; //index into graphs
 	
 public slots:
+		void openSettings(bool unused);			
+		
 		void toggleViewFrame1(bool state);
 		void toggleViewFrame2(bool state);
 		void toggleViewFrame3(bool state);
+		void toggleViewFrame4(bool state);
+		void toggleViewFrame5(bool state);
+		void toggleViewFrame6(bool state);
+		void toggleViewFrame7(bool state);
+		void toggleViewFrame8(bool state);
+		void toggleViewWarningMessages(bool state);
+		void toggleViewDataMessages(bool state);
+		
         bool getUSBData();
 		void getData();
 		void setZero(int var); //initializes a variable to 0 if no value is initially transmitted
@@ -148,6 +168,8 @@ private slots:
   
 private:
   Ui::MainWindow *ui;
+  Settings *settings_window;
+  
 };
 
 #endif // MAINWINDOW_H
