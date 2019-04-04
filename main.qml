@@ -149,34 +149,23 @@ ApplicationWindow {
     Item {
         id: time
 
-        Image {
-            id: timeSymbol
-            x: 8
-            y: 5
-            width: 50
-            height: 50
-            fillMode: Image.PreserveAspectFit
-            source: "Gauge/timer.png"
-
-            Text {
-                id: runtimeValue
-                x: 209
-                y: 1
-                color: "#ffffff"
-                text: {
-                    var minutes = Math.floor(runtimeVal/60);
-                    var seconds = runtimeVal - (minutes * 60);
-                    if(seconds < 10) {
-                        seconds = "0" + seconds;
-                    }
-                    return minutes + 'm ' + seconds + 's';
+        Text {
+            id: runtimeValue
+            x: 209
+            y: 1
+            color: "#ffffff"
+            text: {
+                var minutes = Math.floor(runtimeVal/60);
+                var seconds = runtimeVal - (minutes * 60);
+                if(seconds < 10) {
+                    seconds = "0" + seconds;
                 }
-                anchors.right: parent.right
-                anchors.rightMargin: -159
-                horizontalAlignment: Text.AlignRight
-                font.pixelSize: 40
+                return minutes + 'm ' + seconds + 's';
             }
-
+            anchors.right: parent.right
+            anchors.rightMargin: -200
+            horizontalAlignment: Text.AlignRight
+            font.pixelSize: 40
         }
 
         Text {

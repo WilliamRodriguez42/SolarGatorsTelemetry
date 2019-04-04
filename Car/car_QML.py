@@ -32,7 +32,7 @@ State_Of_Charge         = 0
 Relay_Status            = 0
 Watt_Hours              = 0
 
-def update_variables():
+def update_temp():
 	global DCL_Low_SOC, DCL_High_Cell_Resistance, DCL_Temperature, DCL_Low_Cell_Voltage, DCL_Low_Pack_Voltage, DCL_Voltage_Failsafe, DCL_High_SOC, CCL_High_Cell_Resistance, CCL_Temperature, CCL_High_Cell_Voltage, CCL_High_Pack_Voltage, CCL_Charger_Latch, discharge_relay_disabled, charge_relay_disabled, charger_safety_disabled, diagnostic_trouble_code_active, always_on_power_status, is_ready_power_status, is_charging_power_status, Pack_Amp_Hours, High_Temperature, Low_Temperature, Pack_Current, Pack_Instant_Voltage, State_Of_Charge, Relay_Status, Watt_Hours
 
 	cls = bits_from_int(report['Current Limit Status'].value)
@@ -73,9 +73,9 @@ def update_variables():
 	Low_Temperature         = report['Low Temperature'].get_true_value()
 	Pack_Current            = report['Pack Current'].get_true_value()
 	Pack_Instant_Voltage    = report['Pack Instant Voltage'].get_true_value()
-	State_Of_Charge         = report['State Of Charge'].get_true_value()
+	State_Of_Charge         = report['Pack SOC'].get_true_value()
 	Relay_Status            = report['Relay Status'].get_true_value()
-	Watt_Hours              = report['Watt Hours'].get_true_value()
+	Watt_Hours              = Pack_Instant_Voltage * Pack_Current * 0.0001;
 
 
 #Temporary data generation function
@@ -106,18 +106,20 @@ def update():
 	is_ready_power_status = 1 - is_ready_power_status
 	is_charging_power_status = 1 - is_charging_power_status
 
-	Pack_Amp_Hours          = random.uniform(0, 100)
-	High_Temperature        = random.uniform(0, 500)
-	Low_Temperature         = random.uniform(0, 500)
-	Pack_Current            = random.uniform(0, 100)
-	Pack_Instant_Voltage    = random.uniform(0, 120)
-	State_Of_Charge         = random.uniform(0, 100)
-	Relay_Status            = random.uniform(0, 100)
-	Watt_Hours              = random.uniform(0, 100)
+	Pack_Amp_Hours          = 1#report['Pack Amp Hours'].get_true_value()
+	High_Temperature        = report['High Temperature'].get_true_value()
+	Low_Temperature         = report['Low Temperature'].get_true_value()
+	Pack_Current            = report['Pack Current'].get_true_value()
+	Pack_Instant_Voltage    = report['Pack Instant Voltage'].get_true_value()
+	State_Of_Charge         = report['Pack SOC'].get_true_value()
+	Relay_Status            = 1#report['Relay Status'].get_true_value()
+	Watt_Hours              = Pack_Instant_Voltage * Pack_Current * 0.0001;
 
 
 def close():
 	can.closeEvent()
+
+can = CAN()
 
 #Don't need a main if the PyQt gauge is running :-)
 ##if __name__ == '__main__':

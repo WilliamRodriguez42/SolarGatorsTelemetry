@@ -8,16 +8,6 @@ import numpy as np
 import datetime
 import glob
 
-# Other bullshit
-running_on_pi = False # Change to true if you are running this program on a raspberry pi
-
-# Logging
-max_files_to_keep = 10 # Maximum log files to keep
-
-# Don't use GPIO pins if we are not on a Raspi
-if running_on_pi:
-	import RPi.GPIO as GPIO
-
 # The code to run this thing on boot is the last line in the file:
 # sudo nano ~/.config/lxsession/LXDE-pi/autostart
 
@@ -29,7 +19,7 @@ class SubMessage:
 
 report = {}
 class Message:
-	def __init__(self, text, multiplier, units, num_nibbles, signed=False):
+	def __init__(self, text, multiplier, units, num_nibbles, signed=True):
 		self.text = text
 		self.multiplier = multiplier
 		self.units = units
@@ -44,7 +34,7 @@ class Message:
 	def get_true_value(self):
 		return bytes_to_int(self.value, self.signed) * self.multiplier
 
-blank = Message('', 1, '', 1)
+blank = Message('', 1, '', 2)
 
 # All the submessages in current limit status
 current_limit_status = (
@@ -79,34 +69,30 @@ SubMessage(7, 'is charging power status', True),
 # Leave blank if it's coming in through CAN but you don't want it to print
 ids = {
 	b'6B1' : [
-		blank,
-		Message('Pack Amp Hours', 0.1, 'Ah', 4),
-		Message('Current Limit Status', 1, '', 4, True),
+		Message('Pack DCL', 1, '', 4),
+		Message('Pack CCL', 1, '', 4),
 		Message('High Temperature', 1, 'C', 2),
-		Message('Low Temperature', 1, 'C', 2),
-		blank,
-		blank,
-		blank,
-		blank
+		Message('Low Temperature', 1, 'C', 2)
 	],
-	b'6AE' : [
-		blank,
-		Message('Pack Current', 0.1, 'A', 4, True),
+	b'6B0' : [
+		Message('Pack Current', 0.1, 'A', 4),
 		Message('Pack Instant Voltage', 0.1, 'V', 4),
-		Message('State Of Charge', 0.5, '%', 2),
-		blank,
-		blank,
-		Message('Relay Status', 1, '', 2),
-		blank
+		Message('Pack SOC', 0.5, '%', 2, False),
+		Message('Relay State', 1, '', 4, False)
 	],
-	b'000' : [
-		blank,
-		Message('Watt Hours', 0.00001, 'kWh', 16)
+	b'720' : [
+
+	],
+	b'721' : [
+
+	],
+	b'640' : [
+
 	]
 }
 
-report['Relay Status'].sub_messages = relay_status
-report['Current Limit Status'].sub_messages = current_limit_status
+#report['Relay Status'].sub_messages = relay_status
+#report['Current Limit Status'].sub_messages = current_limit_status
 
 # Convert bytes to integer
 def bytes_to_int(bts, signed = True):
@@ -130,31 +116,15 @@ class CAN:
 	def __init__(self):
 		self.closing = False # Set to true if we are trying to close the program
 
-		# Delete last log file if there are more than 9
-		files = glob.glob('Logs/*.txt')
-		while len(files) >= 10:
-			os.remove(sorted(files)[0])
-			files = glob.glob('*.txt')
-
-		# Create our log file
-		# Comment out for Windows Debugging
-		# self.log_file = open('Logs/' + str(datetime.datetime.now()) + '.txt', 'w')
-
-		# More shit that is exclusive to the pi
-		if running_on_pi:
-			GPIO.setmode(GPIO.BCM)
-			GPIO.setup(15, GPIO.IN)
-
 		# Initialize serial communication to CANdapter
 		self.initSerial()
 
-		# Start a loop for getting speed
-		"""s = threading.Thread(target=self.getSpeed)
-		s.daemon = True
-		s.start()"""
-
-		# Save default information to our log (mainly for debugging)
-		self.log()
+	def print_ids(self):
+		for id, messages in ids.items():
+			print(id)
+			for message in messages:
+				print('\t', message.text)
+				print('\t\t', message.get_true_value())
 
 	def initSerialThread(self):
 		# The name of the USB port that the CANdapter is hooked up to (it's always the same on the Raspi)
@@ -188,29 +158,31 @@ class CAN:
 
 		message = b''
 		while not self.closing:
+			self.print_ids();
 			r = self.ser.read() # Read
 
 			if r == b't': # For some reason they like to end with a t so look for that
 				id = message[:3] # Get the first three nibbles for our ID
 				if id not in ids: # If we don't recognize this ID snitch on it (You'll probably get one of these when you first start the Pi)
-					print('Error: ' + str(id))
+					#print('Error: ' + str(id))
 					message = b''
 					continue
 
 				#report['id'] = id # I don't remember what this was for
 
 				# Parse out all of the messages in this ID
-				start = 3
+				start = 4
 				for m in ids[id]:
+					b = m.num_nibbles
 					if m != blank:
-						b = m.num_nibbles
 						rep = message[start:start+b]
-						m.value = int(rep) # Convert to int 32
-
+						if (m.num_nibbles == 4):
+							m.value = (int(rep[2:4], 16) << 4) | int(rep[0:2], 16)
+						else:
+							m.value = int(rep, 16)
+							
 					start += b
 
-				# Log shit
-				self.log()
 				message = b''
 			else:
 				message += r
@@ -224,48 +196,8 @@ class CAN:
 		initThread.daemon = True
 		initThread.start()
 
-	def log(self):
-		# Logs all data from report into our log file
-		for id, messages in sorted(ids.items()):
-			for message in messages:
-				if message != blank:
-					self.log_file.write(str(message.text) + ', ' + str(message.get_true_value()) + ' ' + message.units + '\n')
-		self.log_file.flush()
-
-	"""def getSpeed(self):
-		# Get the goddamn speed for the love of God
-		while not self.closing:
-			if running_on_pi:
-				curr = GPIO.input(15) # Recieve on gpio 15
-				currtime = time.time() # The current time, bitch
-
-				delta = currtime - self.lasttime # The change in time, it's fucking CRAZY
-				mph = 1/delta * self.wheel_circumference * self.inches_to_miles * self.seconds_to_hours / 6 # Convert to MPH (divide by 6 because we have six magnets that we are reading from)
-
-				if all([p == 1 for p in self.prev[1:]]) and self.prev[0] == 0: # Check if there is one 0 followed by nine 1's
-					if abs((self.prevMPH[-1] - mph) / delta) < self.valid_accel: # Make sure we didn't just accelerate like crazy because that's probably wrong
-						# Record our speed
-						self.prevMPH.append(mph)
-						if len(self.prevMPH) > self.record_length:
-							self.prevMPH = self.prevMPH[1:]
-
-						avgMPH = 0
-						for s in self.prevMPH:
-							avgMPH += s
-
-						avgMPH /= self.record_length
-
-						self.speed = avgMPH
-
-						self.lasttime = currtime
-
-				self.prev.append(curr)
-				if len(self.prev) > self.valid_length:
-					self.prev = self.prev[1:]"""
-
 	def closeEvent(self):
 		# Close my ass cheeks
-		self.log_file.close()
 		if self.ser:
 			self.ser.close()
 		self.closing = True

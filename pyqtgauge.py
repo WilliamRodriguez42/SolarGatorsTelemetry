@@ -41,7 +41,6 @@ class UpdaterClass(QObject):
 			global update_counter, ip_addr, wifi_name
 			if update_counter % 150 == 0:
 				ip_addr, wifi_name = internet.get_ip_and_name()
-				print("HI")
 
 			self.DCL.emit(  str(round(Logging.voltage, 2))+" V",
 							str(round(Logging.current, 2))+" A",
