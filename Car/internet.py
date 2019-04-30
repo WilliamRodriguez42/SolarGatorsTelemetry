@@ -4,7 +4,7 @@ from io import StringIO
 import re
 
 def get_ip_and_name():
-	os.popen("xscreensaver-command -deactivate") # While we are at it, wake up the screen
+	#os.popen("xscreensaver-command -deactivate") # While we are at it, wake up the screen
 
 	ip_addr = os.popen("ip addr show wlan0").read()
 	wlan_name = os.popen("iwgetid | grep wlan0").read()

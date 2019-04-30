@@ -38,27 +38,40 @@ class UpdaterClass(QObject):
 		super(UpdaterClass, self).__init__(parent)
 
 	def dcl_update(self):
-			global update_counter, ip_addr, wifi_name
-			if update_counter % 150 == 0:
-				ip_addr, wifi_name = internet.get_ip_and_name()
+		global update_counter, ip_addr, wifi_name
+		if update_counter % 150 == 0:
+			ip_addr, wifi_name = internet.get_ip_and_name()
 
-			self.DCL.emit(  str(round(Logging.voltage, 2))+" V",
-							str(round(Logging.current, 2))+" A",
-							str(round(speed.getSpeed(),2))+" MPH",
-							ip_addr,
-							wifi_name,
-							"HI")
+		self.DCL.emit(  str(round(Logging.voltage, 2))+" V",
+						str(round(Logging.current, 2))+" A",
+						str(round(speed.getSpeed(),2))+" MPH",
+						ip_addr,
+						wifi_name,
+						"HI")
 
-			update_counter += 1
+		update_counter += 1
 
 	def ccl_update(self):
 		self.CCL.emit("HI", "HI", "HI", "HI", "HI", "HI")
 
 	def relays_update(self):
-		self.relays.emit(car_QML.discharge_relay_disabled, car_QML.charge_relay_disabled, car_QML.charger_safety_disabled, car_QML.diagnostic_trouble_code_active, car_QML.always_on_power_status, car_QML.is_ready_power_status, car_QML.is_charging_power_status)
+		self.relays.emit(	car_QML.discharge_relay_disabled,
+							car_QML.charge_relay_disabled,
+							car_QML.charger_safety_disabled,
+							car_QML.rs == [1, 1, 1, 1, 1, 1, 1, 1],
+							car_QML.always_on_power_status,
+							car_QML.is_ready_power_status,
+							car_QML.rs == [0, 0, 0, 0, 0, 0, 0, 0])
 
 	def pack_update(self):
-		self.pack.emit(car_QML.Pack_Amp_Hours, car_QML.High_Temperature, car_QML.Low_Temperature, car_QML.Pack_Current, car_QML.Pack_Instant_Voltage, car_QML.State_Of_Charge, car_QML.Relay_Status, car_QML.Watt_Hours)
+		self.pack.emit(	car_QML.Pack_Amp_Hours,
+						car_QML.High_Temperature,
+						car_QML.Low_Temperature,
+						car_QML.Pack_Current,
+						car_QML.Pack_Instant_Voltage,
+						car_QML.State_Of_Charge,
+						0,
+						car_QML.Watt_Hours)
 
 	def speed_update(self):
 		self.speed.emit(speed.getSpeed(), pro_strats.optimumSpeedLow, pro_strats.optimumSpeedHigh)

@@ -176,11 +176,12 @@ class CAN:
 					b = m.num_nibbles
 					if m != blank:
 						rep = message[start:start+b]
+						print(id, m, rep)
 						if (m.num_nibbles == 4):
-							m.value = (int(rep[2:4], 16) << 4) | int(rep[0:2], 16)
+							m.value = (int(rep[2:4], 16) << 8) | int(rep[0:2], 16)
 						else:
 							m.value = int(rep, 16)
-							
+
 					start += b
 
 				message = b''
@@ -201,6 +202,3 @@ class CAN:
 		if self.ser:
 			self.ser.close()
 		self.closing = True
-
-# comment out for Windows debugging
-# can = CAN()
