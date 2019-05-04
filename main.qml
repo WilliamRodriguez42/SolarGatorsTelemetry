@@ -44,14 +44,14 @@ ApplicationWindow {
     property int loopy_infinity_val     : 1
     property int okay_val       		: 1
 
-    property real pack_Amp_Hours_val        : 100
+    property real average_cell_voltage_val  : 100
     property real high_Temperature_val      : 100
     property real low_Temperature_val       : 100
     property real pack_Current_val          : 100
     property real pack_Instant_Voltage_val  : 100
     property real state_Of_Charge_val       : 100
-    property real relay_Status_val          : 100
-    property real watt_Hours_val            : 100
+    property real average_temperature_val   : 100
+    property real low_cell_voltage_val      : 100
 
 
     /*
@@ -90,14 +90,14 @@ ApplicationWindow {
     }
 
     function updatePack(pack_Amp_Hours, high_Temperature, low_Temperature, pack_Current, pack_Instant_Voltage, state_Of_Charge, relay_Status, watt_Hours) {
-        pack_Amp_Hours_val          = pack_Amp_Hours;
+        average_cell_voltage_val          = pack_Amp_Hours;
         high_Temperature_val        = high_Temperature;
         low_Temperature_val         = low_Temperature;
         pack_Current_val            = pack_Current;
         pack_Instant_Voltage_val    = pack_Instant_Voltage;
         state_Of_Charge_val         = state_Of_Charge;
-        relay_Status_val            = relay_Status;
-        watt_Hours_val              = watt_Hours;
+        average_temperature_val            = relay_Status;
+        low_cell_voltage_val              = watt_Hours;
     }
 
     function updateSpeed(speed, optimumSpeedLow, optimumSpeedHigh){
@@ -445,9 +445,9 @@ ApplicationWindow {
             x: 215
             y: 119
             color: "#ffffff"
-            text: pack_Amp_Hours_val.toFixed(2) + ' Ah'
+            text: average_cell_voltage_val.toFixed(2) + ' V'
             anchors.right: parent.right
-            anchors.rightMargin: -372
+            anchors.rightMargin: -353
             font.pixelSize: 35
             horizontalAlignment: Text.AlignRight
         }
@@ -457,9 +457,9 @@ ApplicationWindow {
             x: 215
             y: 147
             color: "#ffffff"
-            text: watt_Hours_val.toFixed(2) + ' kWh'
+            text: ""
             anchors.right: parent.right
-            anchors.rightMargin: -400
+            anchors.rightMargin: -353
             font.pixelSize: 35
             horizontalAlignment: Text.AlignRight
         }
@@ -469,7 +469,7 @@ ApplicationWindow {
             x: 216
             y: 176
             color: "#ffffff"
-            text: pack_Current_val.toFixed(2) + ' A'
+            text: ""
             anchors.right: parent.right
             anchors.rightMargin: -353
             font.pixelSize: 35
@@ -481,7 +481,7 @@ ApplicationWindow {
             x: 216
             y: 205
             color: "#ffffff"
-            text: pack_Instant_Voltage_val.toFixed(2) + ' V'
+            text: ""
             anchors.right: parent.right
             anchors.rightMargin: -353
             font.pixelSize: 35
@@ -495,7 +495,7 @@ ApplicationWindow {
             color: "#ffffff"
             text: state_Of_Charge_val.toFixed(2) + ' %'
             anchors.right: parent.right
-            anchors.rightMargin: -579
+            anchors.rightMargin: -566
             font.pixelSize: 35
             horizontalAlignment: Text.AlignRight
         }
@@ -505,9 +505,9 @@ ApplicationWindow {
             x: 429
             y: 147
             color: "#ffffff"
-            text: relay_Status_val.toFixed(2)
+            text: average_temperature_val.toFixed(2) + ' C'
             anchors.right: parent.right
-            anchors.rightMargin: -534
+            anchors.rightMargin: -566
             font.pixelSize: 35
             horizontalAlignment: Text.AlignRight
         }

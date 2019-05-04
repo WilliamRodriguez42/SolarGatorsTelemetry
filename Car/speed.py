@@ -1,10 +1,15 @@
-import RPi.GPIO as GPIO
+running_on_pi = True
+if running_on_pi:
+	import RPi.GPIO as GPIO
+
 import time
 import threading
 import math
 
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(4, GPIO.IN)
+if running_on_pi:
+	GPIO.setmode(GPIO.BCM)
+	GPIO.setup(4, GPIO.IN)
+
 current = 0
 previous = 0
 beginning = time.time()
@@ -25,7 +30,11 @@ def histor():
 
 def check():
 	global current,previous,tps,speed
-	current = GPIO.input(4)
+
+	if running_on_pi:
+		current = GPIO.input(4)
+	else:
+		current = 5
 
 	if(current == 0 and previous == 1):
 		histor()
@@ -42,7 +51,9 @@ def stopThread():
 	global running,thread
 	running = False
 	thread.join()
-	GPIO.cleanup()
+
+	if running_on_pi:
+		GPIO.cleanup()
 
 def theThread():
 	while(True):

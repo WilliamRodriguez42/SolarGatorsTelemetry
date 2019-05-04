@@ -42,17 +42,22 @@ class UpdaterClass(QObject):
 		if update_counter % 150 == 0:
 			ip_addr, wifi_name = internet.get_ip_and_name()
 
-		self.DCL.emit(  str(round(Logging.voltage, 2))+" V",
-						str(round(Logging.current, 2))+" A",
-						str(round(speed.getSpeed(),2))+" MPH",
+		self.DCL.emit(  "Low: "+str(round(car_QML.low_cell_voltage, 2))+" V",
+						"High: "+str(round(car_QML.high_cell_voltage, 2))+" V",
+						str(round(speed.getSpeed(), 2))+" MPH",
+						"Avg: "+str(round(car_QML.average_cell_voltage, 2))+" V",
 						ip_addr,
-						wifi_name,
-						"HI")
+						wifi_name)
 
 		update_counter += 1
 
 	def ccl_update(self):
-		self.CCL.emit("HI", "HI", "HI", "HI", "HI", "HI")
+		self.CCL.emit(	"Summed: "+str(round(car_QML.pack_summed_voltage, 2))+" V",
+						"High: "+str(round(car_QML.high_temperature, 2))+" C",
+						"SOC: "+str(round(car_QML.adaptive_soc, 2))+" %",
+						"Low: "+str(round(car_QML.low_temperature, 2))+" C",
+						"Avg: "+str(round(car_QML.average_temperature, 2))+" C",
+						"")
 
 	def relays_update(self):
 		self.relays.emit(	car_QML.discharge_relay_disabled,
@@ -64,14 +69,14 @@ class UpdaterClass(QObject):
 							car_QML.rs == [0, 0, 0, 0, 0, 0, 0, 0])
 
 	def pack_update(self):
-		self.pack.emit(	car_QML.Pack_Amp_Hours,
-						car_QML.High_Temperature,
-						car_QML.Low_Temperature,
-						car_QML.Pack_Current,
-						car_QML.Pack_Instant_Voltage,
-						car_QML.State_Of_Charge,
+		self.pack.emit(	car_QML.average_cell_voltage,
+						car_QML.high_temperature,
+						car_QML.low_temperature,
 						0,
-						car_QML.Watt_Hours)
+						0, #car_QML.Pack_Instant_Voltage,
+						car_QML.adaptive_soc,
+						car_QML.average_temperature,
+						0) #car_QML.low_cell_voltage)
 
 	def speed_update(self):
 		self.speed.emit(speed.getSpeed(), pro_strats.optimumSpeedLow, pro_strats.optimumSpeedHigh)

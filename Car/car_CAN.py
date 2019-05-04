@@ -67,27 +67,34 @@ SubMessage(7, 'is charging power status', True),
 # It works in the form of:
 # Name (unit_multiplier units)
 # Leave blank if it's coming in through CAN but you don't want it to print
+"""b'6B1' : [
+	Message('Pack DCL', 1, '', 4),
+	Message('Pack CCL', 1, '', 4),
+	Message('High Temperature', 1, 'C', 2),
+	Message('Low Temperature', 1, 'C', 2)
+],
+b'6B0' : [
+	Message('Pack Current', 0.1, 'A', 4),
+	Message('Pack Instant Voltage', 0.1, 'V', 4),
+	Message('Pack SOC', 0.5, '%', 2, False),
+	Message('Relay State', 1, '', 4, False)
+],"""
+
 ids = {
-	b'6B1' : [
-		Message('Pack DCL', 1, '', 4),
-		Message('Pack CCL', 1, '', 4),
-		Message('High Temperature', 1, 'C', 2),
-		Message('Low Temperature', 1, 'C', 2)
-	],
 	b'6B0' : [
-		Message('Pack Current', 0.1, 'A', 4),
-		Message('Pack Instant Voltage', 0.1, 'V', 4),
-		Message('Pack SOC', 0.5, '%', 2, False),
-		Message('Relay State', 1, '', 4, False)
+		Message('Low Cell Voltage', 0.0001, 'V', 4),
+		Message('High Cell Voltage', 0.0001, 'V', 4),
+		Message('Average Cell Voltage', 0.0001, 'V', 4),
+		Message('Pack Summed Voltage', 0.01, 'V', 4)
 	],
-	b'720' : [
-
-	],
-	b'721' : [
-
-	],
-	b'640' : [
-
+	b'6B1' : [
+		Message('Low Temperature', 1, 'C', 2),
+		Message('High Temperature', 1, 'C', 2),
+		Message('Average Temperature', 1, 'C', 2),
+		Message('Adaptive SOC', 0.5, '%', 2, False),
+		Message('Relay State', 1, '', 4, False),
+		blank,
+		blank,
 	]
 }
 
